@@ -61,6 +61,7 @@ namespace derive {
 			delete _cursor;
 			delete _bounds;
 			delete _transform;
+			delete _hitArea;
 		}
 
 		Bounds* DisplayObject::bounds() {
@@ -195,12 +196,25 @@ namespace derive {
 			}
 		}
 
+		void DisplayObject::depth( int d ) {
+			_depth = d;
+		}
+
 		Point* DisplayObject::cursor() {
 			return _cursor;
 		}
 
 		Grid* DisplayObject::snap() {
 			return _grid;
+		}
+
+		HitArea* DisplayObject::hitArea() {
+			return _hitArea;
+		}
+
+		void DisplayObject::hitArea( HitArea* hitArea ) {
+			delete _hitArea;
+			_hitArea = hitArea;
 		}
 
 		void DisplayObject::fit( Bounds* bounds, int fitMode, int alignMode ) {

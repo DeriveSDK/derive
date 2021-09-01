@@ -8,6 +8,7 @@
 #include "derive/geom/Bounds.h"
 #include "derive/geom/Grid.h"
 #include "derive/geom/Point.h"
+#include "derive/geom/HitArea.h"
 // Skia
 #include "core/SkSurface.h"
 #include "core/SkMatrix.h"
@@ -92,6 +93,8 @@ namespace derive {
 			Grid* _grid;
 			Bounds* _bounds;
 			SkMatrix* _transform; // The global transform
+			HitArea* _hitArea = nullptr;
+			int _depth = 0;
 
 			#ifdef DERIVE_SCRIPT
 			// Call JS update
@@ -265,6 +268,13 @@ namespace derive {
 			virtual DisplayObject* remove();
 
 			/**
+			 * @brief Set the depth of the object
+			 * Used internally
+			 * @param d The depth
+			 */
+			virtual void depth( int d );
+
+			/**
 			 * @brief Set the cursor position
 			 * Should be called by the parent. Point should be in parent coordinates
 			 * @param x The x coordinate of the cursor
@@ -286,6 +296,20 @@ namespace derive {
 			 * @return Grid* The grid
 			 */
 			virtual Grid* snap();
+
+			/**
+			 * @brief Get the current hit area for cursor/mouse events
+			 * 
+			 * @return HitArea* The hit area, or null
+			 */
+			virtual HitArea* hitArea();
+
+			/**
+			 * @brief Set the hit area for cursor/mouse events
+			 * Any existing hit area will be freed first.
+			 * @param hitArea The hit area, or null to remove it
+			 */
+			virtual void hitArea( HitArea* hitArea );
 
 			/**
 			 * @brief Fit the object to the supplied rectangular area
