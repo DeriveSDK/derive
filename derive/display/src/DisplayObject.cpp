@@ -1,15 +1,15 @@
 // Derive
 #include "../DisplayObject.h"
 #include "derive/geom/Bounds.h"
-
+#include "derive/utils/Math.h"
 // Skia
 #include "core/SkScalar.h"
-
 // Other
 #include <algorithm>
 #include <iostream>
 
 using namespace derive::geom;
+using namespace derive::utils;
 
 namespace derive {
 	namespace display {
@@ -49,18 +49,19 @@ namespace derive {
 			#endif
 			_state = new DisplayObjectProps();
 			_grid = new Grid();
-			_cursor = new Point();
+			mouse = new Point();
 			_bounds = new Bounds();
-			_transform = new SkMatrix();
+			_transform = new Matrix();
 		}
 
 		DisplayObject::~DisplayObject() {
 			removeAllChildren();
 			delete _state;
 			delete _grid;
-			delete _cursor;
+			delete mouse;
 			delete _bounds;
 			delete _transform;
+			delete _hitArea;
 		}
 
 		Bounds* DisplayObject::bounds() {
@@ -176,8 +177,8 @@ namespace derive {
 		void DisplayObject::_removed() {
 			_parent = nullptr;
 			stage( nullptr );
-			_transform->setIdentity();
-			_cursor->clear();
+			_transform->identity();
+			mouse->clear();
 		}
 
 		void DisplayObject::_added( DisplayObject* parent ) {
@@ -185,25 +186,25 @@ namespace derive {
 			stage( _parent->stage() );
 		}
 
-		void DisplayObject::cursor( double x, double y ) {
-			_cursor->set( x, y );
-			_cursor->rotate( rotation, originX, originY );
-			_cursor->subtract( x, y );
-			// Step children
-			for ( auto& child : _children ) {
-				child->cursor( _cursor->x(), _cursor->y() );
-			}
-		}
-
-		Point* DisplayObject::cursor() {
-			return _cursor;
+		void DisplayObject::depth( int d ) {
+			_depth = d;
 		}
 
 		Grid* DisplayObject::snap() {
 			return _grid;
 		}
 
+		HitArea* DisplayObject::hitArea() {
+			return _hitArea;
+		}
+
+		void DisplayObject::hitArea( HitArea* hitArea ) {
+			delete _hitArea;
+			_hitArea = hitArea;
+		}
+
 		void DisplayObject::fit( Bounds* bounds, int fitMode, int alignMode ) {
+			// XXX: Support transform/rotate?
 			scaleX = bounds->width() / width;
 			scaleY = bounds->height() / height;
 
@@ -294,30 +295,37 @@ namespace derive {
 			}
 		}
 
-		void DisplayObject::preRender( SkSurface* surface, SkMatrix* transform, bool forceTransformUpdate, double dt ) {
+		void DisplayObject::preRender( SkSurface* surface, Matrix* transform, bool forceTransformUpdate, double dt ) {
 			// XXX: Get dirty rect from old state before copy
 			bool changed = _state->copy( this );
 			if ( changed || forceTransformUpdate ) {
 				_dirty = true;
 
-				_transform->setIdentity();
-				_transform = &_transform->postConcat( *transform );
-
-				double ox = originX * scaleX;
-				double oy = originY * scaleY;
-				_transform = &_transform->preConcat( SkMatrix::Translate( x - ox, y - oy ) );
-				_transform = &_transform->preConcat( SkMatrix::RotateDeg( rotation, SkPoint::Make( ox, oy ) ) );
-				_transform = &_transform->preConcat( SkMatrix::Scale( scaleX, scaleY ) );
+				// Copy transform from parent and apply local transform
+				_transform->copy( transform );
+				_transform->apply( scaleX, scaleY, Math::degToRad(rotation), x, y, originX, originY );
 			}
 		}
 
-		void DisplayObject::postRender( SkSurface* surface, SkMatrix* transform, double dt ) {
+		void DisplayObject::postRender( SkSurface* surface, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* globalMouse ) {
+			// Set depth
+			_depth = depth++;
+
+			// Hit area
+			if ( hitArea() && hitArea()->enabled ){
+				hitAreas->insert( hitAreas->begin(), this );
+			}
+
+			// Transform mouse position
+			mouse->copy( globalMouse );
+			_transform->inverseTransform( mouse );
+			
 			// Step children
 			for ( auto child : _children ) {
 				if ( !child->visible ) continue;
 				child->preRender( surface, _transform, _dirty, dt );
 				child->render( surface, dt );
-				child->postRender( surface, _transform, dt );
+				child->postRender( surface, _transform, dt, depth, hitAreas, globalMouse );
 			}
 
 			_dirty = false;

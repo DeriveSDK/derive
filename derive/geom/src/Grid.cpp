@@ -15,18 +15,18 @@ namespace derive {
 		}
 
 		void Grid::snap( Point* p ) {
-			double x = p->x();
-			double y = p->y();
+			double x = p->x;
+			double y = p->y;
 			if ( _origin ) {
-				if ( x < _origin->x() ) x = _origin->x();
-				if ( y < _origin->y() ) y = _origin->y();
+				if ( x < _origin->x ) x = _origin->x;
+				if ( y < _origin->y ) y = _origin->y;
 			}
 			if ( _limit ) {
-				if ( x > _limit->x() ) x = _limit->x();
-				if ( y > _limit->y() ) y = _limit->y();
+				if ( x > _limit->x ) x = _limit->x;
+				if ( y > _limit->y ) y = _limit->y;
 			}
-			p->x( floor( x / _cell->x() ) * _cell->x() );
-			p->y( floor( y / _cell->y() ) * _cell->y() );
+			p->x = floor( x / _cell->x ) * _cell->x;
+			p->y = floor( y / _cell->y ) * _cell->y;
 		}
 
 		void Grid::cell( Point* p ) {
@@ -44,15 +44,15 @@ namespace derive {
 				else _origin = new Point( p );
 
 				if ( _limit ) {
-					if ( _limit->x() < _origin->x() ) {
-						auto t = _limit->x();
-						_limit->x( _origin->x() );
-						_origin->x( t );
+					if ( _limit->x < _origin->x ) {
+						auto t = _limit->x;
+						_limit->x = _origin->x;
+						_origin->x = t;
 					}
-					if ( _limit->y() < _origin->y() ) {
-						auto t = _limit->y();
-						_limit->y( _origin->y() );
-						_origin->y( t );
+					if ( _limit->y < _origin->y ) {
+						auto t = _limit->y;
+						_limit->y = _origin->y;
+						_origin->y = t;
 					}
 				}
 			}
@@ -73,15 +73,15 @@ namespace derive {
 				else _limit = new Point( p );
 
 				if ( _origin ) {
-					if ( _limit->x() < _origin->x() ) {
-						auto t = _limit->x();
-						_limit->x( _origin->x() );
-						_origin->x( t );
+					if ( _limit->x < _origin->x ) {
+						auto t = _limit->x;
+						_limit->x = _origin->x;
+						_origin->x = t;
 					}
-					if ( _limit->y() < _origin->y() ) {
-						auto t = _limit->y();
-						_limit->y( _origin->y() );
-						_origin->y( t );
+					if ( _limit->y < _origin->y ) {
+						auto t = _limit->y;
+						_limit->y = _origin->y;
+						_origin->y = t;
 					}
 				}
 			}

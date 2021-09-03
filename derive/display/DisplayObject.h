@@ -8,9 +8,10 @@
 #include "derive/geom/Bounds.h"
 #include "derive/geom/Grid.h"
 #include "derive/geom/Point.h"
+#include "derive/geom/HitArea.h"
+#include "derive/geom/Matrix.h"
 // Skia
 #include "core/SkSurface.h"
-#include "core/SkMatrix.h"
 // QuickJS(pp)
 #ifdef DERIVE_SCRIPT
 #include "quickjspp.hpp"
@@ -88,10 +89,11 @@ namespace derive {
 			vector<DisplayObject*> _children;
 			DisplayObjectProps* _state;
 			bool _dirty = false;
-			Point* _cursor;
 			Grid* _grid;
 			Bounds* _bounds;
-			SkMatrix* _transform; // The global transform
+			Matrix* _transform; // The global transform
+			HitArea* _hitArea = nullptr;
+			int _depth = 0;
 
 			#ifdef DERIVE_SCRIPT
 			// Call JS update
@@ -265,20 +267,19 @@ namespace derive {
 			virtual DisplayObject* remove();
 
 			/**
-			 * @brief Set the cursor position
-			 * Should be called by the parent. Point should be in parent coordinates
-			 * @param x The x coordinate of the cursor
-			 * @param y The y coordinate of the cursor
+			 * @brief Set the depth of the object
+			 * Used internally
+			 * @param d The depth
 			 */
-			virtual void cursor( double x, double y );
+			virtual void depth( int d );
 
 			/**
-			 * @brief Return the cursor position
+			 * @brief The mouse cursor position
 			 * Do not destroy the cursor. Modifying the position using the pointer directly will not
-			 * affect children.
-			 * @return Point* The cursor position
+			 * affect the mouse position on for the children.
+			 * @return Point* The mouse position in local space
 			 */
-			virtual Point* cursor();
+			Point* mouse;
 
 			/**
 			 * @brief Get the snap grid for this object
@@ -286,6 +287,20 @@ namespace derive {
 			 * @return Grid* The grid
 			 */
 			virtual Grid* snap();
+
+			/**
+			 * @brief Get the current hit area for cursor/mouse events
+			 * 
+			 * @return HitArea* The hit area, or null
+			 */
+			virtual HitArea* hitArea();
+
+			/**
+			 * @brief Set the hit area for cursor/mouse events
+			 * Any existing hit area will be freed first.
+			 * @param hitArea The hit area, or null to remove it
+			 */
+			virtual void hitArea( HitArea* hitArea );
 
 			/**
 			 * @brief Fit the object to the supplied rectangular area
@@ -340,7 +355,7 @@ namespace derive {
 			 * @param forceTransformUpdate Force the trasnform to be updated (usually because the parent has changed)
 			 * @param dt The time, in seconds, since the last call to render
 			 */
-			virtual void preRender( SkSurface* surface, SkMatrix* transform, bool forceTransformUpdate, double dt );
+			virtual void preRender( SkSurface* surface, Matrix* transform, bool forceTransformUpdate, double dt );
 
 			/**
 			 * @brief Called every render step
@@ -360,8 +375,9 @@ namespace derive {
 			 * @param surface The Skia surface to draw to
 			 * @param transform The global transform
 			 * @param dt The time, in seconds, since the last call to render
+			 * @param depth The global depth
 			 */
-			virtual void postRender( SkSurface* surface, SkMatrix* transform, double dt );
+			virtual void postRender( SkSurface* surface, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* mouse );
 		};
 
 	} // display

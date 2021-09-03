@@ -14,10 +14,18 @@ namespace derive {
 		 *
 		 */
 		class Point {
-		private:
-			double _x = 0;
-			double _y = 0;
 		public:
+			/**
+			 * @brief The X coordinate
+			 * 
+			 */
+			double x;
+
+			/**
+			 * @brief The Y coordinate
+			 * 
+			 */
+			double y;
 
 			/**
 			 * @brief Construct a new Point object with e supplied position
@@ -39,34 +47,6 @@ namespace derive {
 			 *
 			 */
 			virtual ~Point();
-
-			/**
-			 * @brief Get the X coordinate
-			 *
-			 * @return double The X coordinate
-			 */
-			double x() const;
-
-			/**
-			 * @brief Set the X coordinate
-			 *
-			 * @param x The X coordinate
-			 */
-			void x( double x );
-
-			/**
-			 * @brief Get the Y coordinate
-			 *
-			 * @return double The Y coordinate
-			 */
-			double y() const;
-
-			/**
-			 * @brief Set the Y coordinate
-			 *
-			 * @param x The Y coordinate
-			 */
-			void y( double y );
 
 			/**
 			 * @brief Clear the point

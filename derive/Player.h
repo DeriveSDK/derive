@@ -6,6 +6,7 @@
 #include "derive/display/DisplayObject.h"
 #include "derive/display/DisplayMode.h"
 #include "derive/display/ScaleMode.h"
+#include "derive/geom/Matrix.h"
 // GLFW
 #include <GLFW/glfw3.h>
 // Skia
@@ -14,13 +15,14 @@
 #include "gpu/GrDirectContext.h"
 #include "core/SkSurface.h"
 #include "core/SkCanvas.h"
-#include "core/SkMatrix.h"
 // Other
 #include <string>
+#include <vector>
 
 using namespace std;
 using namespace derive;
 using namespace derive::display;
+using namespace derive::geom;
 
 namespace derive {
 
@@ -31,41 +33,31 @@ namespace derive {
 		GLFWwindow* _window = nullptr;
 		SkSurface* _surface = nullptr;
 		GrDirectContext* _context = nullptr;
-		GLuint windowTexture;
-		bool isFullscreen = false;
-		colorARGB bgColor = 0xffffffff;
-		colorARGB lboxColor = 0x000000ff;
+		bool _isFullscreen = false;
+		colorARGB _bgColor = 0xffffffff;
+		colorARGB _lboxColor = 0x000000ff;
 		int width = 0;
 		int height = 0;
 		int _displayMode = DisplayMode::Default;
 		int _scaleMode = ScaleMode::Default;
 		int _alignMode = AlignMode::Default;
+		bool _mouseOver = false;
+		bool _mouseMoved = false;
+		Point* _mouse;
+		vector<DisplayObject*>* _hitAreas;
 
-		double lastUpdateSeconds;
-		double dtUpdateSeconds;
-		double updatePeriod = 0.0; // as fast as possible
-		double lastRenderSeconds;
-		double dtRenderSeconds;
-		double renderPeriod = 1.0 / 60.0; // 60fps
+		double _lastUpdateSeconds;
+		double _dtUpdateSeconds;
+		double _updatePeriod = 0.0; // as fast as possible
+		double _lastRenderSeconds;
+		double _dtRenderSeconds;
+		double _renderPeriod = 1.0 / 60.0; // 60fps
 
 		DisplayObject* _stage;
-		SkMatrix* _stageTransform;
+		Matrix* _stageTransform;
 		SkRect* _stageRect;
 		bool _dirty = true;
 
-		/**
-		 * @brief Called on update fps
-		 *
-		 * @param dt Seconds since last update
-		 */
-		virtual void _update( double dt );
-
-		/**
-		 * @brief Called on render fps
-		 *
-		 * @param dt Seconds since last render
-		 */
-		virtual void _render( SkSurface* surface, double dt );
 	public:
 		/**
 		 * @brief Get the Player singleton instance

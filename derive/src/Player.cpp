@@ -1,10 +1,9 @@
 // Derive
 #include "../Player.h"
 #include "derive/events/MouseEvent.h"
-
+#include "derive/geom/HitAreaRect.h"
 // Skia
 #include "core/SkColorSpace.h"
-
 // Other
 #include <algorithm>
 #include <math.h>
@@ -86,6 +85,13 @@ namespace derive {
 		if ( fullscreen ) this->fullscreen( true );
 		glfwMakeContextCurrent( _window );
 		glfwSwapInterval( 1 ); // Vsync
+		// Mouse
+		_mouseOver = glfwGetWindowAttrib( _window, GLFW_HOVERED );
+		double mx;
+		double my;
+		glfwGetCursorPos( _window, &mx, &my );
+		_mouse = new Point( mx, my );
+		_hitAreas = new vector<DisplayObject*>();
 		// Callbacks
 		glfwSetWindowSizeCallback( _window, _deriveOnWindowResize ); // Window resize
 		glfwSetKeyCallback( _window, _deriveOnKey ); // Key
@@ -96,16 +102,16 @@ namespace derive {
 		// Stage
 		_stage = new DisplayObject();
 		_stage->stage( _stage );
+		_stage->hitArea( new HitAreaRect( 0, 0, width, height ) );
 		_stage->width = width;
 		_stage->height = height;
-		_stageTransform = new SkMatrix();
-		_stageTransform->setIdentity();
+		_stageTransform = new Matrix();
 		_stageRect = new SkRect();
 		// Force resize to create the render surface
 		onResize();
 		// Start timing
-		lastUpdateSeconds = glfwGetTime();
-		lastRenderSeconds = lastUpdateSeconds;
+		_lastUpdateSeconds = glfwGetTime();
+		_lastRenderSeconds = _lastUpdateSeconds;
 	}
 
 	Player::~Player() {
@@ -113,6 +119,7 @@ namespace derive {
 		delete _context;
 		delete _stageRect;
 		delete _stageTransform;
+		delete _hitAreas;
 		glfwTerminate();
 		instance = NULL;
 	}
@@ -146,9 +153,9 @@ namespace derive {
 	}
 
 	void Player::fullscreen( bool state ) {
-		if ( isFullscreen == state ) return;
-		isFullscreen = state;
-		if ( isFullscreen ) {
+		if ( _isFullscreen == state ) return;
+		_isFullscreen = state;
+		if ( _isFullscreen ) {
 			// get details of the current monitor that the window is in
 			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 			const GLFWvidmode* mode = glfwGetVideoMode( monitor );
@@ -161,86 +168,121 @@ namespace derive {
 	}
 
 	bool Player::fullscreen() {
-		return isFullscreen;
+		return _isFullscreen;
 	}
 
 	void Player::backgroundColor( colorARGB color ) {
-		bgColor = color;
+		_bgColor = color;
 	}
 
 	colorARGB Player::backgroundColor() {
-		return bgColor;
+		return _bgColor;
 	}
 
 	void Player::letterboxColor( colorARGB color ) {
-		lboxColor = color;
+		_lboxColor = color;
 	}
 
 	colorARGB Player::letterboxColor() {
-		return lboxColor;
+		return _lboxColor;
 	}
 
 	void Player::fps( int render, int update ) {
-		renderPeriod = ( render == 0.0 ) ? 0.0 : 1.0 / render;
-		updatePeriod = ( update == 0.0 ) ? 0.0 : 1.0 / update;
+		_renderPeriod = ( render == 0.0 ) ? 0.0 : 1.0 / render;
+		_updatePeriod = ( update == 0.0 ) ? 0.0 : 1.0 / update;
 	}
 
 	void Player::run() {
 		while ( !glfwWindowShouldClose( _window ) ) {
-			// Cursor (mouse)
-			double cx, cy;
-			glfwGetCursorPos( _window, &cx, &cy );
-			stage()->cursor( cx, cy );
 
 			// Current time
 			double nowSeconds = glfwGetTime();
 
-			// XXX: Process events
+			// Mouse events: over, out, move
+			if ( _hitAreas->size() > 0 ) {
+				MouseEvent* event = new MouseEvent( MouseEvent::move );
+				for ( auto child : *_hitAreas ) {
+					if (child->hitArea()->hit(child->mouse)) {
+						// Over
+						if (!child->hitArea()->over) {
+							child->hitArea()->over = true;
+							event->target = child;
+							event->type = MouseEvent::over;
+							event->mouseX = child->mouse->x;
+							event->mouseY = child->mouse->y;
+							child->dispatch( event );
+						}
+						// Move
+						event->target = child;
+						event->type = MouseEvent::move;
+						event->mouseX = child->mouse->x;
+						event->mouseY = child->mouse->y;
+						child->dispatch( event );
+					}
+					// Out
+					else if (child->hitArea()->over){
+						child->hitArea()->over = false;
+						event->target = child;
+						event->type = MouseEvent::out;
+						event->mouseX = child->mouse->x;
+						event->mouseY = child->mouse->y;
+						child->dispatch( event );
+					}
+				}
+				delete event;
+			}
 
 			// Update
-			dtUpdateSeconds = nowSeconds - lastUpdateSeconds;
-			if ( dtUpdateSeconds >= updatePeriod ) {
-				lastUpdateSeconds = nowSeconds;
+			_dtUpdateSeconds = nowSeconds - _lastUpdateSeconds;
+			if ( _dtUpdateSeconds >= _updatePeriod ) {
+				_lastUpdateSeconds = nowSeconds;
 
 				// Update display list
-				_update( dtUpdateSeconds );
+				stage()->preUpdate( _dtUpdateSeconds );
+				update( _dtUpdateSeconds );
+				stage()->update( _dtUpdateSeconds );
+				stage()->postUpdate( _dtUpdateSeconds );
 			}
 
 			// Render
-			dtRenderSeconds = nowSeconds - lastRenderSeconds;
-			if ( dtRenderSeconds >= renderPeriod ) {
-				lastRenderSeconds = nowSeconds;
+			_dtRenderSeconds = nowSeconds - _lastRenderSeconds;
+			if ( _dtRenderSeconds >= _renderPeriod ) {
+				_lastRenderSeconds = nowSeconds;
 
-				// Render display list
-				_render( _surface, dtRenderSeconds );
+				// Clip to the stage
+				// XXX: Clip to dirty area
+				_surface->getCanvas()->clear( _lboxColor );
+				_surface->getCanvas()->save();
+				_surface->getCanvas()->clipRect( *_stageRect );
+				_surface->getCanvas()->clear( _bgColor );
+
+				// Pre-render process
+				stage()->preRender( _surface, _stageTransform, _dirty, _dtRenderSeconds );
+
+				// Render
+				stage()->render( _surface, _dtRenderSeconds );
+
+				// Post render process
+				double mx;
+				double my;
+				glfwGetCursorPos( _window, &mx, &my );
+				_mouseMoved = (_mouse->x != mx) || (_mouse->y != my);
+				_mouse->set( mx, my );
+
+				int depth = 0;
+				_hitAreas->clear();
+				stage()->postRender( _surface, _stageTransform, _dtRenderSeconds, depth, _hitAreas, _mouse );
+				_surface->getCanvas()->restore();
+				_dirty = false;
+
+				// Finalize
 				_context->flush();
-
 				glfwSwapBuffers( _window );
 			}
 
 			// Process pending events
 			glfwPollEvents();
 		}
-	}
-
-	void Player::_update( double dt ) {
-		stage()->preUpdate( dt );
-		update( dt );
-		stage()->update( dt );
-		stage()->postUpdate( dt );
-	}
-
-	void Player::_render( SkSurface* surface, double dt ) {
-		surface->getCanvas()->clear( this->lboxColor );
-		surface->getCanvas()->save();
-		surface->getCanvas()->clipRect( *_stageRect );
-		surface->getCanvas()->clear( this->bgColor );
-		stage()->preRender( surface, _stageTransform, _dirty, dt );
-		stage()->render( surface, dt );
-		stage()->postRender( surface, _stageTransform, dt );
-		surface->getCanvas()->restore();
-
-		_dirty = false;
 	}
 
 	void Player::onResize() {
@@ -329,6 +371,11 @@ namespace derive {
 			min( width, (int)( stage()->x + stage()->width + 0.5 ) ),
 			min( height, (int)( stage()->y + stage()->height + 0.5 ) )
 		);
+		HitAreaRect* stageHit = (HitAreaRect*)_stage->hitArea();
+		stageHit->x = _stage->x;
+		stageHit->y = _stage->y;
+		stageHit->width = _stage->width;
+		stageHit->height = _stage->height;
 
 		_dirty = true;
 	}
@@ -353,10 +400,7 @@ namespace derive {
 	}
 
 	void Player::onMouseEnterLeave( bool entered ) {
-		MouseEvent* event = new MouseEvent( MouseEvent::over, stage() );
-		glfwGetCursorPos( _window, &event->mouseX, &event->mouseY );
-		if ( !entered ) event->type = MouseEvent::out;
-		stage()->dispatch( event );
+		_mouseOver = entered;
 	}
 
 	void Player::onMouseButton( int button, int action, int mods ) {

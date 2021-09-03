@@ -80,8 +80,8 @@ namespace derive {
 		}
 
 		void Bounds::setPos( Point* p ) {
-			_x1 = p->x();
-			_y1 = p->y();
+			_x1 = p->x;
+			_y1 = p->y;
 			recalc2();
 		}
 		void Bounds::setPos( double x, double y ) {
@@ -98,8 +98,8 @@ namespace derive {
 		}
 
 		void Bounds::setPos2( Point* p ) {
-			_x2 = p->x();
-			_y2 = p->y();
+			_x2 = p->x;
+			_y2 = p->y;
 			recalc();
 		}
 		void Bounds::setPos2( double x, double y ) {
@@ -109,7 +109,7 @@ namespace derive {
 		}
 
 		void Bounds::set( Point* p, double width, double height ) {
-			set( p->x(), p->y(), width, height );
+			set( p->x, p->y, width, height );
 		}
 		void Bounds::set( double x, double y, double width, double height ) {
 			_x1 = x;
@@ -136,7 +136,7 @@ namespace derive {
 		}
 
 		bool Bounds::contains( Point* p ) {
-			return ( p->x() >= _x1 ) && ( p->x() <= _x2 ) && ( p->y() >= _y1 ) && ( p->y() <= _y2 );
+			return ( p->x >= _x1 ) && ( p->x <= _x2 ) && ( p->y >= _y1 ) && ( p->y <= _y2 );
 		}
 
 		bool Bounds::contains( double x, double y ) {
@@ -161,8 +161,8 @@ namespace derive {
 		}
 
 		void Bounds::translate( Point* p ) {
-			_x1 += p->x();
-			_y1 += p->y();
+			_x1 += p->x;
+			_y1 += p->y;
 			recalc2();
 		}
 
