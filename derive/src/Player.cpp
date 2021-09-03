@@ -117,8 +117,11 @@ namespace derive {
 	Player::~Player() {
 		delete _surface;
 		delete _context;
+		delete _stage;
 		delete _stageRect;
 		delete _stageTransform;
+		delete _mouse;
+		for (auto event : *_mouseEvents) delete event;
 		delete _hitAreas;
 		delete _mouseEvents;
 		glfwTerminate();

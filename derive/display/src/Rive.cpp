@@ -3,7 +3,6 @@
 #include "derive/utils/SkiaTypes.h"
 // Rive
 #include "rive/core/binary_reader.hpp"
-#include "rive/file.hpp"
 #include "skia_renderer.hpp"
 // Other
 #include <iostream>
@@ -15,7 +14,7 @@ namespace derive {
 	namespace display {
 
 		Rive::Rive() {
-			_rendererTransform = new SkMatrix();
+			_renderer = new RiveSkiaRenderer( nullptr );
 		}
 
 		Rive::Rive( string filename ): Rive() {
@@ -23,9 +22,9 @@ namespace derive {
 		}
 
 		Rive::~Rive() {
-			delete animation;
-			delete artboard;
-			delete _rendererTransform;
+			delete _renderer;
+			delete _animation;
+			delete _file;
 		}
 
 		bool Rive::load( string filename ) {
@@ -41,51 +40,51 @@ namespace derive {
 		void Rive::loadFromAsset( EmbeddedAssetData asset ) {
 			cout << "  load from asset" << endl;
 			auto reader = BinaryReader( (uint8_t*)asset.data, asset.length );
-			File* file = nullptr;
-			auto result = File::import( reader, &file );
+			delete _file;
+			_file = nullptr;
+			auto result = File::import( reader, &_file );
 			if ( result != ImportResult::success ) {
 				fprintf( stderr, "failed to import file\n" );
 				return;
 			}
-			artboard = file->artboard();
-			width = artboard->width();
-			height = artboard->height();
-			artboard->advance( 0.0f );
+			_artboard = _file->artboard();
+			width = _artboard->width();
+			height = _artboard->height();
+			_artboard->advance( 0.0f );
 
 			play();
 		}
 
 		bool Rive::loaded() {
-			return !!artboard;
+			return !!_artboard;
 		}
 
 		void Rive::play( int index ) {
-			if ( animation ) delete animation;
-			if ( index > artboard->animationCount() ) index = artboard->animationCount() - 1;
+			delete _animation;
+			if ( index > _artboard->animationCount() ) index = _artboard->animationCount() - 1;
 			if ( index < 0 ) index = 0;
 
-			animation = new LinearAnimationInstance( artboard->animation( index ) );
+			_animation = new LinearAnimationInstance( _artboard->animation( index ) );
 		}
 
 		void Rive::update( double dt ) {
-			if ( artboard ) {
-				if ( animation ) {
-					animation->advance( dt );
-					animation->apply( artboard );
+			if ( _artboard ) {
+				if ( _animation ) {
+					_animation->advance( dt );
+					_animation->apply( _artboard );
 				}
-				artboard->advance( dt );
+				_artboard->advance( dt );
 			}
 			DisplayObject::update( dt );
 		}
 
 		void Rive::render( SkSurface* surface, double dt ) {
-			if ( artboard ) {
-				SkiaRenderer renderer( surface->getCanvas() );
-				renderer.save();
-				SkiaTypes::convert( _transform, _rendererTransform );
-				renderer.transform( _rendererTransform );
-				artboard->draw( &renderer );
-				renderer.restore();
+			if ( _artboard ) {
+				_renderer->canvas = surface->getCanvas();
+				_renderer->save();
+				_renderer->transform( _transform );
+				_artboard->draw( _renderer );
+				_renderer->restore();
 			}
 			DisplayObject::render( surface, dt );
 		}

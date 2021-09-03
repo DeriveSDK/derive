@@ -90,6 +90,11 @@ public:
 		juice->listen( MouseEvent::down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
 	}
 
+	~Main() {	
+		delete babyJuice;
+		delete juice;
+	}
+
 	void update( double dt ) {
 		juice->rotation += dt * 20;
 		babyJuice->rotation += dt * 40;
@@ -109,11 +114,14 @@ public:
 };
 
 int main( void ) {
+	
+	Main* main;
 	try {
-		Main main;
-		main.run();
+		main = new Main();
+		main->run();
 	}
 	catch ( ... ) { }
+	delete main;
 
 	return 0;
 }
