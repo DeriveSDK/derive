@@ -8,6 +8,8 @@
 // Rive
 #include "rive/artboard.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
+// Skia
+#include "core/SkMatrix.h"
 // Other
 #include <string>
 
@@ -21,6 +23,8 @@ namespace derive {
 		 * @brief A rive animation class
 		 */
 		class Rive : public DisplayObject {
+		protected:
+			SkMatrix* _rendererTransform;
 		public:
 			/**
 			 * @brief Construct a new Rive object

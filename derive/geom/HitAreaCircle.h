@@ -61,8 +61,8 @@ namespace derive {
 			 * @param p The point to check
 			 */
 			virtual bool hit( Point* p ) {
-                double xx = x - p->x();
-                double yy = y - p->y();
+                double xx = x - p->x;
+                double yy = y - p->y;
                 return ( xx*xx + yy*yy ) <= _r2;
             }
 

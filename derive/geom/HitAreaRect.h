@@ -54,7 +54,7 @@ namespace derive {
 			 * @param p The point to check
 			 */
 			virtual bool hit( Point* p ){
-                return (p->x() >= x) && (p->x() <= (x + width)) && (p->y() >= y) && (p->y() <= (y + height));
+                return (p->x >= x) && (p->x <= (x + width)) && (p->y >= y) && (p->y <= (y + height));
             }
 
 		};

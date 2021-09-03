@@ -1,28 +1,31 @@
 // Derive
 #include "../Rive.h"
-
+#include "derive/utils/SkiaTypes.h"
 // Rive
 #include "rive/core/binary_reader.hpp"
 #include "rive/file.hpp"
 #include "skia_renderer.hpp"
-
 // Other
 #include <iostream>
 
 using namespace rive;
+using namespace derive::utils;
 
 namespace derive {
 	namespace display {
 
-		Rive::Rive() { }
+		Rive::Rive() {
+			_rendererTransform = new SkMatrix();
+		}
 
-		Rive::Rive( string filename ) {
+		Rive::Rive( string filename ): Rive() {
 			load( filename );
 		}
 
 		Rive::~Rive() {
-			if ( animation ) delete animation;
-			if ( artboard ) delete artboard;
+			delete animation;
+			delete artboard;
+			delete _rendererTransform;
 		}
 
 		bool Rive::load( string filename ) {
@@ -79,7 +82,8 @@ namespace derive {
 			if ( artboard ) {
 				SkiaRenderer renderer( surface->getCanvas() );
 				renderer.save();
-				renderer.transform( _transform );
+				SkiaTypes::convert( _transform, _rendererTransform );
+				renderer.transform( _rendererTransform );
 				artboard->draw( &renderer );
 				renderer.restore();
 			}

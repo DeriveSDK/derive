@@ -63,8 +63,6 @@ namespace derive {
 		auto& module = context->addModule( "geom" );
 
 		// Point
-		typedef double( Point::* Point_getDoubleF )( ) const;
-		typedef void( Point::* Point_setDoubleF )( double );
 		typedef void ( Point::* Point_voidPointF )( Point* );
 		typedef void ( Point::* Point_void2DoubleF )( double, double );
 		typedef bool ( Point::* Point_boolPointF )( Point* );
@@ -74,8 +72,8 @@ namespace derive {
 		typedef void ( Point::* Point_void3DoubleF )( double, double, double );
 		module.class_<Point>( "Point" )
 			.constructor<double, double>()
-			.property<(Point_getDoubleF)&Point::x, (Point_setDoubleF)&Point::x>( "x" )
-			.property<(Point_getDoubleF)&Point::y, (Point_setDoubleF)&Point::y>( "y" )
+			.fun<&Point::x>( "x" )
+			.fun<&Point::y>( "y" )
 			.fun<&Point::clear>( "clear" )
 			.fun<(Point_voidPointF)&Point::set>( "set" )
 			.fun<(Point_void2DoubleF)&Point::set>( "setXY" )
@@ -146,7 +144,6 @@ namespace derive {
 		auto& module = context->addModule( "display" );
 
 		// Display object
-		typedef Point* ( DisplayObject::* Displayobject_pointF )( );
 		module.class_<DisplayObject>( "DisplayObject" )
 			.constructor<>()
 			.property<&DisplayObject::parent>( "parent" )
@@ -155,7 +152,7 @@ namespace derive {
 			.property<&DisplayObject::last>( "last" )
 			.property<&DisplayObject::first>( "next" )
 			.property<&DisplayObject::last>( "prev" )
-			.property<(Displayobject_pointF)&DisplayObject::cursor>( "cursor" )
+			.fun<&DisplayObject::mouse>( "mouse" )
 			.fun<&DisplayObject::addChild>( "addChild" )
 			.fun<&DisplayObject::addChildAt>( "addChildAt" )
 			.fun<&DisplayObject::removeChild>( "removeChild" )

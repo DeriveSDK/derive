@@ -58,6 +58,11 @@ namespace derive {
 			 */
 			bool over = false;
 
+			/**
+			 * @brief Flag to indicate if mouse events are enabled
+			 */
+			bool enabled = true;
+
 		};
 
 	} // geom

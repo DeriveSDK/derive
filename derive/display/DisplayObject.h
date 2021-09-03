@@ -9,9 +9,9 @@
 #include "derive/geom/Grid.h"
 #include "derive/geom/Point.h"
 #include "derive/geom/HitArea.h"
+#include "derive/geom/Matrix.h"
 // Skia
 #include "core/SkSurface.h"
-#include "core/SkMatrix.h"
 // QuickJS(pp)
 #ifdef DERIVE_SCRIPT
 #include "quickjspp.hpp"
@@ -89,10 +89,9 @@ namespace derive {
 			vector<DisplayObject*> _children;
 			DisplayObjectProps* _state;
 			bool _dirty = false;
-			Point* _cursor;
 			Grid* _grid;
 			Bounds* _bounds;
-			SkMatrix* _transform; // The global transform
+			Matrix* _transform; // The global transform
 			HitArea* _hitArea = nullptr;
 			int _depth = 0;
 
@@ -275,20 +274,12 @@ namespace derive {
 			virtual void depth( int d );
 
 			/**
-			 * @brief Set the cursor position
-			 * Should be called by the parent. Point should be in parent coordinates
-			 * @param x The x coordinate of the cursor
-			 * @param y The y coordinate of the cursor
-			 */
-			virtual void cursor( double x, double y );
-
-			/**
-			 * @brief Return the cursor position
+			 * @brief The mouse cursor position
 			 * Do not destroy the cursor. Modifying the position using the pointer directly will not
-			 * affect children.
-			 * @return Point* The cursor position
+			 * affect the mouse position on for the children.
+			 * @return Point* The mouse position in local space
 			 */
-			virtual Point* cursor();
+			Point* mouse;
 
 			/**
 			 * @brief Get the snap grid for this object
@@ -364,7 +355,7 @@ namespace derive {
 			 * @param forceTransformUpdate Force the trasnform to be updated (usually because the parent has changed)
 			 * @param dt The time, in seconds, since the last call to render
 			 */
-			virtual void preRender( SkSurface* surface, SkMatrix* transform, bool forceTransformUpdate, double dt );
+			virtual void preRender( SkSurface* surface, Matrix* transform, bool forceTransformUpdate, double dt );
 
 			/**
 			 * @brief Called every render step
@@ -384,8 +375,9 @@ namespace derive {
 			 * @param surface The Skia surface to draw to
 			 * @param transform The global transform
 			 * @param dt The time, in seconds, since the last call to render
+			 * @param depth The global depth
 			 */
-			virtual void postRender( SkSurface* surface, SkMatrix* transform, double dt );
+			virtual void postRender( SkSurface* surface, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* mouse );
 		};
 
 	} // display

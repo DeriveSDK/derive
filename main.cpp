@@ -29,6 +29,7 @@
 #include "derive/Player.h"
 #include "derive/display/Rive.h"
 #include "derive/events/MouseEvent.h"
+#include "derive/geom/HitAreaCircle.h"
 #endif
 
 #include <iostream>
@@ -71,8 +72,9 @@ public:
 		juice->scaleY = 0.6;
 		juice->originX = juice->width / 2;
 		juice->originY = juice->height / 2;
-		juice->x = 400;
-		juice->y = 400;
+		juice->x = stage()->width / 2;
+		juice->y = stage()->height / 2;
+		juice->hitArea( new HitAreaCircle(540,540,540) );
 		stage()->addChild( juice );
 
 		babyJuice = new Rive( "juice.riv" );
@@ -84,8 +86,7 @@ public:
 		babyJuice->scaleY = 0.3;
 		juice->addChild( babyJuice );
 
-		stage()->listen( MouseEvent::over, [this](Event* event) -> bool { return this->onMouseOver( event ); } );
-		stage()->listen( MouseEvent::out, [this](Event* event) -> bool { return this->onMouseOut( event ); } );
+		juice->listen( MouseEvent::move, [this](Event* event) -> bool { return this->onMouseMove( event ); } );
 	}
 
 	void update( double dt ) {
@@ -93,13 +94,10 @@ public:
 		babyJuice->rotation += dt * 40;
 	}
 
-	bool onMouseOver( Event* event ) {
-		cout << "mouse over" << endl;
-		return true;
-	}
-
-	bool onMouseOut( Event* event ) {
-		cout << "mouse out" << endl;
+	bool onMouseMove( Event* event ) {
+		cout << "mouse moved" << endl;
+		babyJuice->x = juice->mouse->x;
+		babyJuice->y = juice->mouse->y;
 		return true;
 	}
 };
