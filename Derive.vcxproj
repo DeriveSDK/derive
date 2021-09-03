@@ -57,6 +57,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -105,6 +106,7 @@
     <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)out\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>D:\Projects\derivesdk\dependencies\lib\release;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>D:\Projects\derivesdk\dependencies\lib\release;$(LibraryPath)</LibraryPath>
@@ -169,7 +171,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;libglew32.lib;rive.lib;rive_skia_renderer.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;libglew32.lib;rive.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -178,9 +180,11 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\skia;$(SolutionDir)dependencies\skia\include;$(SolutionDir)dependencies\rive\skia\renderer\include;$(SolutionDir)dependencies\rive\include;$(SolutionDir)dependencies\quickjspp;$(SolutionDir)dependencies\quickjs;$(SolutionDir)dependencies\glfw\include;$(SolutionDir)dependencies\glew\include;$(SolutionDir)assets\include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;glew32.lib;rive.lib;rive_skia_renderer.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glew32.lib;rive.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -197,7 +201,7 @@
       <PreprocessorDefinitions>NDEBUG</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;glew32.lib;rive.lib;rive_skia_renderer.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glew32.lib;rive.lib;skia.lib;opengl32.lib;quickjs.lib;clang_rt.builtins-x86_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -212,6 +216,7 @@
     <ClCompile Include="derive\geom\src\Grid.cpp" />
     <ClCompile Include="derive\geom\src\Matrix.cpp" />
     <ClCompile Include="derive\geom\src\Point.cpp" />
+    <ClCompile Include="derive\render\src\RiveSkiaRenderer.cpp" />
     <ClCompile Include="derive\src\Player.cpp" />
     <ClCompile Include="derive\src\Script.cpp" />
     <ClCompile Include="main.cpp" />
@@ -244,6 +249,7 @@
     <ClInclude Include="derive\geom\Grid.h" />
     <ClInclude Include="derive\geom\Point.h" />
     <ClInclude Include="derive\Player.h" />
+    <ClInclude Include="derive\render\RiveSkiaRenderer.h" />
     <ClInclude Include="derive\Script.h" />
     <ClInclude Include="derive\utils\SkiaTypes.h" />
   </ItemGroup>

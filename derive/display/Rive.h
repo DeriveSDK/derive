@@ -5,9 +5,11 @@
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
 #include "derive/geom/Bounds.h"
+#include "derive/render/RiveSkiaRenderer.h"
 // Rive
 #include "rive/artboard.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
+#include "rive/file.hpp"
 // Skia
 #include "core/SkMatrix.h"
 // Other
@@ -15,6 +17,7 @@
 
 using namespace rive;
 using namespace derive::assets;
+using namespace derive::render;
 
 namespace derive {
 	namespace display {
@@ -23,8 +26,6 @@ namespace derive {
 		 * @brief A rive animation class
 		 */
 		class Rive : public DisplayObject {
-		protected:
-			SkMatrix* _rendererTransform;
 		public:
 			/**
 			 * @brief Construct a new Rive object
@@ -85,10 +86,14 @@ namespace derive {
 			virtual void render( SkSurface* surface, double dt );
 
 		protected:
+			// The file for this rive
+			File* _file = nullptr;
 			// The artboard for this rive
-			Artboard* artboard = nullptr;
+			Artboard* _artboard = nullptr;
 			// The animation instance
-			LinearAnimationInstance* animation = nullptr;
+			LinearAnimationInstance* _animation = nullptr;
+			// The renderer
+			RiveSkiaRenderer* _renderer;
 
 			/**
 			 * @brief Load from an embedded asset
