@@ -86,7 +86,8 @@ public:
 		babyJuice->scaleY = 0.3;
 		juice->addChild( babyJuice );
 
-		juice->listen( MouseEvent::move, [this](Event* event) -> bool { return this->onMouseMove( event ); } );
+		//juice->listen( MouseEvent::move, [this](Event* event) -> bool { return this->onMouseMove( event ); } );
+		juice->listen( MouseEvent::down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
 	}
 
 	void update( double dt ) {
@@ -96,6 +97,11 @@ public:
 
 	bool onMouseMove( Event* event ) {
 		cout << "mouse moved" << endl;
+		return true;
+	}
+
+	bool onMouseClick( Event* event ) {
+		cout << "mouse clicked" << endl;
 		babyJuice->x = juice->mouse->x;
 		babyJuice->y = juice->mouse->y;
 		return true;

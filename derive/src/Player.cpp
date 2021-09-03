@@ -1,6 +1,5 @@
 // Derive
 #include "../Player.h"
-#include "derive/events/MouseEvent.h"
 #include "derive/geom/HitAreaRect.h"
 // Skia
 #include "core/SkColorSpace.h"
@@ -92,6 +91,7 @@ namespace derive {
 		glfwGetCursorPos( _window, &mx, &my );
 		_mouse = new Point( mx, my );
 		_hitAreas = new vector<DisplayObject*>();
+		_mouseEvents = new vector<MouseEvent*>();
 		// Callbacks
 		glfwSetWindowSizeCallback( _window, _deriveOnWindowResize ); // Window resize
 		glfwSetKeyCallback( _window, _deriveOnKey ); // Key
@@ -120,6 +120,7 @@ namespace derive {
 		delete _stageRect;
 		delete _stageTransform;
 		delete _hitAreas;
+		delete _mouseEvents;
 		glfwTerminate();
 		instance = NULL;
 	}
@@ -200,37 +201,51 @@ namespace derive {
 
 			// Mouse events: over, out, move
 			if ( _hitAreas->size() > 0 ) {
-				MouseEvent* event = new MouseEvent( MouseEvent::move );
 				for ( auto child : *_hitAreas ) {
 					if (child->hitArea()->hit(child->mouse)) {
 						// Over
 						if (!child->hitArea()->over) {
 							child->hitArea()->over = true;
-							event->target = child;
-							event->type = MouseEvent::over;
-							event->mouseX = child->mouse->x;
-							event->mouseY = child->mouse->y;
+							MouseEvent* event = new MouseEvent( MouseEvent::over, child );
+							event->localX = child->mouse->x;
+							event->localY = child->mouse->y;
+							event->stageX = stage()->mouse->x;
+							event->stageY = stage()->mouse->y;
 							child->dispatch( event );
+							delete event;
 						}
-						// Move
-						event->target = child;
-						event->type = MouseEvent::move;
-						event->mouseX = child->mouse->x;
-						event->mouseY = child->mouse->y;
-						child->dispatch( event );
+						// Step pending mouse events
+						auto it = _mouseEvents->begin();
+						while ( it != _mouseEvents->end() ) {
+							(*it)->target = child;
+							(*it)->localX = child->mouse->x;
+							(*it)->localY = child->mouse->y;
+							child->dispatch( (*it) );
+							// remove event if receiver has stopped propagation
+							if ((*it)->propogate == PropogationType::None) {
+								it = _mouseEvents->erase( it );
+							}
+							else {
+								++it;
+							}
+						}
 					}
 					// Out
 					else if (child->hitArea()->over){
 						child->hitArea()->over = false;
-						event->target = child;
-						event->type = MouseEvent::out;
-						event->mouseX = child->mouse->x;
-						event->mouseY = child->mouse->y;
+						MouseEvent* event = new MouseEvent( MouseEvent::out, child );
+						event->localX = child->mouse->x;
+						event->localY = child->mouse->y;
+						event->stageX = stage()->mouse->x;
+						event->stageY = stage()->mouse->y;
 						child->dispatch( event );
+						delete event;
 					}
 				}
-				delete event;
 			}
+			// Clear mouse events
+			for (auto event : *_mouseEvents) delete event;
+			_mouseEvents->clear();
 
 			// Update
 			_dtUpdateSeconds = nowSeconds - _lastUpdateSeconds;
@@ -263,13 +278,17 @@ namespace derive {
 				stage()->render( _surface, _dtRenderSeconds );
 
 				// Post render process
+				int depth = 0;
 				double mx;
 				double my;
 				glfwGetCursorPos( _window, &mx, &my );
-				_mouseMoved = (_mouse->x != mx) || (_mouse->y != my);
+				if ((_mouse->x != mx) || (_mouse->y != my)){
+					MouseEvent* event = new MouseEvent( MouseEvent::move );
+					event->moveX = mx - _mouse->x;
+					event->moveY = my - _mouse->y;
+					_mouseEvents->push_back( new MouseEvent( MouseEvent::move ) );
+				}
 				_mouse->set( mx, my );
-
-				int depth = 0;
 				_hitAreas->clear();
 				stage()->postRender( _surface, _stageTransform, _dtRenderSeconds, depth, _hitAreas, _mouse );
 				_surface->getCanvas()->restore();
@@ -404,8 +423,9 @@ namespace derive {
 	}
 
 	void Player::onMouseButton( int button, int action, int mods ) {
-		MouseEvent* event = new MouseEvent( 0, stage() );
-		glfwGetCursorPos( _window, &event->mouseX, &event->mouseY );
+		MouseEvent* event = new MouseEvent();
+		event->stageX = stage()->mouse->x;
+		event->stageY = stage()->mouse->y;
 		switch ( action ) {
 			case GLFW_PRESS:
 				switch ( button ) {
@@ -413,12 +433,14 @@ namespace derive {
 					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::rightDown; break;
 					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::middleDown; break;
 				}
+				break;
 			case GLFW_RELEASE:
 				switch ( button ) {
 					case GLFW_MOUSE_BUTTON_LEFT: event->type = MouseEvent::up; break;
 					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::rightUp; break;
 					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::middleUp; break;
 				}
+				break;
 		}
 		if ( mods & GLFW_MOD_SHIFT ) event->shift = true;
 		if ( mods & GLFW_MOD_ALT ) event->alt = true;
@@ -426,15 +448,16 @@ namespace derive {
 		if ( mods & GLFW_MOD_SUPER ) event->super = true;
 		if ( mods & GLFW_MOD_CAPS_LOCK ) event->capsLock = true;
 		if ( mods & GLFW_MOD_NUM_LOCK ) event->numLock = true;
-		stage()->dispatch( event );
+		_mouseEvents->push_back( event );
 	}
 
 	void Player::onMouseScroll( double xoffset, double yoffset ) {
-		MouseEvent* event = new MouseEvent( MouseEvent::scroll, stage() );
-		glfwGetCursorPos( _window, &event->mouseX, &event->mouseY );
+		MouseEvent* event = new MouseEvent( MouseEvent::scroll );
+		event->stageX = stage()->mouse->x;
+		event->stageY = stage()->mouse->y;
 		event->scrollX = xoffset;
 		event->scrollY = yoffset;
-		stage()->dispatch( event );
+		_mouseEvents->push_back( event );
 	}
 
 	void Player::onFileDrop( int count, const char** paths ) { }

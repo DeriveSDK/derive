@@ -61,11 +61,23 @@ namespace derive {
 				scroll = 118,
 			};
 
+			// The X coordinate of the mouse cursor within the object
+			double localX = 0;
+
+			// The Y coordinate of the mouse cursor within the object
+			double localY = 0;
+
 			// The X coordinate of the mouse cursor in global space
-			double mouseX = 0;
+			double stageX = 0;
 
 			// The Y coordinate of the mouse cursor in global space
-			double mouseY = 0;
+			double stageY = 0;
+
+			// For move event, the amount of movement in the X direction in global space
+			double moveX = 0;
+
+			// For move event, the amount of movement in the Y direction in global space
+			double moveY = 0;
 
 			// For a scroll event, the amount of scroll in the X direction
 			double scrollX = 0;
