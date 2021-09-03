@@ -121,9 +121,10 @@ namespace derive {
 		delete _stageRect;
 		delete _stageTransform;
 		delete _mouse;
-		for (auto event : *_mouseEvents) delete event;
 		delete _hitAreas;
+		for (auto event : *_mouseEvents) delete event;
 		delete _mouseEvents;
+		glfwDestroyWindow(_window);
 		glfwTerminate();
 		instance = NULL;
 	}
@@ -226,6 +227,7 @@ namespace derive {
 							child->dispatch( (*it) );
 							// remove event if receiver has stopped propagation
 							if ((*it)->propogate == PropogationType::None) {
+								delete *it;
 								it = _mouseEvents->erase( it );
 							}
 							else {
@@ -282,20 +284,23 @@ namespace derive {
 
 				// Post render process
 				int depth = 0;
-				double mx;
-				double my;
-				glfwGetCursorPos( _window, &mx, &my );
-				if ((_mouse->x != mx) || (_mouse->y != my)){
-					MouseEvent* event = new MouseEvent( MouseEvent::move );
-					event->moveX = mx - _mouse->x;
-					event->moveY = my - _mouse->y;
-					_mouseEvents->push_back( new MouseEvent( MouseEvent::move ) );
-				}
-				_mouse->set( mx, my );
+				double mx = _mouse->x;
+				double my = _mouse->y;
+				glfwGetCursorPos( _window, &_mouse->x, &_mouse->y );
 				_hitAreas->clear();
 				stage()->postRender( _surface, _stageTransform, _dtRenderSeconds, depth, _hitAreas, _mouse );
 				_surface->getCanvas()->restore();
 				_dirty = false;
+
+				// Mouse move event
+				if ((_mouse->x != mx) || (_mouse->y != my)){
+					MouseEvent* event = new MouseEvent( MouseEvent::move );
+					event->stageX = stage()->mouse->x;
+					event->stageY = stage()->mouse->y;
+					event->moveX = _mouse->x - mx;
+					event->moveY = _mouse->y - my;
+					_mouseEvents->push_back( event );
+				}
 
 				// Finalize
 				_context->flush();
