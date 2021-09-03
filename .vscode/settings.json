@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "*.jx": "jsonc",
+        "vector": "cpp",
+        "iostream": "cpp",
+        "random": "cpp",
+        "bitset": "cpp",
+        "set": "cpp",
+        "locale": "cpp",
+        "regex": "cpp",
+        "algorithm": "cpp",
+        "xstring": "cpp",
+        "ostream": "cpp",
+        "cmath": "cpp"
+    }
+}

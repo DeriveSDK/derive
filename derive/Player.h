@@ -6,6 +6,7 @@
 #include "derive/display/DisplayObject.h"
 #include "derive/display/DisplayMode.h"
 #include "derive/display/ScaleMode.h"
+#include "derive/events/MouseEvent.h"
 #include "derive/geom/Matrix.h"
 // GLFW
 #include <GLFW/glfw3.h>
@@ -45,6 +46,7 @@ namespace derive {
 		bool _mouseMoved = false;
 		Point* _mouse;
 		vector<DisplayObject*>* _hitAreas;
+		vector<MouseEvent*>* _mouseEvents;
 
 		double _lastUpdateSeconds;
 		double _dtUpdateSeconds;
