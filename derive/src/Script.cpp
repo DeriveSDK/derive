@@ -4,10 +4,15 @@
 #include "derive/geom/Point.h"
 #include "derive/geom/Bounds.h"
 #include "derive/geom/Matrix.h"
+#include "derive/geom/HitAreaRect.h"
+#include "derive/geom/HitAreaCircle.h"
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
 #include "derive/display/Image.h"
 #include "derive/display/Rive.h"
+#include "derive/events/KeyEvent.h"
+#include "derive/events/MouseEvent.h"
+#include "derive/events/PlayerEvent.h"
 // Other
 #include <iostream>
 
@@ -52,9 +57,9 @@ namespace derive {
 
 		const char* import = R"(
 			import * as std from 'std';
-			"import * as os from 'os';
-			"globalThis.std = std;
-			"globalThis.os = os;
+			import * as os from 'os';
+			globalThis.std = std;
+			globalThis.os = os;
 		)";
 		context->eval( import, "<import>", JS_EVAL_TYPE_MODULE );
 	}
@@ -155,6 +160,28 @@ namespace derive {
 			.fun<&Matrix::copy>( "copy" )
 			.fun<&Matrix::clone>( "clone" );
 
+		// Hit area
+		module.class_<HitArea>( "HitArea" )
+			.constructor< double, double >()
+			.fun<&HitArea::x>( "x" )
+			.fun<&HitArea::y>( "y" )
+			.fun<&HitArea::hit>( "hit" );
+
+		// Hit area rect
+		module.class_<HitAreaRect>( "HitAreaRect" )
+			.base<HitArea>()
+			.constructor< double, double, double, double >()
+			.fun<&HitAreaRect::width>( "width" )
+			.fun<&HitAreaRect::height>( "height" );
+
+		// Hit area circle
+		typedef double( HitAreaCircle::* HitAreaCircle_getDoubleF )( void );
+		typedef void( HitAreaCircle::* HitAreaCircle_setDoubleF )( double );
+		module.class_<HitAreaCircle>( "HitAreaCircle" )
+			.base<HitArea>()
+			.constructor< double, double, double >()
+			.property<(HitAreaCircle_getDoubleF)&HitAreaCircle::radius, (HitAreaCircle_setDoubleF)&HitAreaCircle::radius>( "radius" );
+
 		const char* import = R"(
 			import * as geom from 'geom';
 			globalThis.geom = geom;
@@ -162,7 +189,98 @@ namespace derive {
 		context->eval( import, "<import>", JS_EVAL_TYPE_MODULE );
 	}
 
-	void Script::bindEvents() {}
+	void Script::bindEvents() {
+
+		// Create events module
+		auto& module = context->addModule( "events" );
+
+		// Event object
+		module.class_<Event>("Event")
+			.constructor<>()
+			.fun<&Event::type>("type")
+			.fun<&Event::cancelled>( "cancelled" )
+			.fun<&Event::stopPropagation>( "stopPropagation" )
+			.fun<&Event::reset>( "reset" );
+		
+		// Key Event object
+		module.class_<KeyEvent>( "KeyEvent" )
+			.base<Event>()
+			.constructor<>()
+			.fun<&KeyEvent::keyCode>( "keyCode" )
+			.fun<&KeyEvent::scanCode>( "scanCode" )
+			.fun<&KeyEvent::alt>( "alt" )
+			.fun<&KeyEvent::shift>( "shift" )
+			.fun<&KeyEvent::ctrl>( "ctrl" )
+			.fun<&KeyEvent::super>( "super" )
+			.fun<&KeyEvent::capsLock>( "capsLock" )
+			.fun<&KeyEvent::numLock>( "numLock" );
+
+		// Mouse Event object
+		module.class_<MouseEvent>( "MouseEvent" )
+			.base<KeyEvent>()
+			.constructor<>()
+			.fun<&MouseEvent::localX>( "localX" )
+			.fun<&MouseEvent::localY>( "localY" )
+			.fun<&MouseEvent::stageX>( "stageX" )
+			.fun<&MouseEvent::stageY>( "stageY" )
+			.fun<&MouseEvent::moveX>( "moveX" )
+			.fun<&MouseEvent::moveY>( "moveY" )
+			.fun<&MouseEvent::scrollX>( "scrollX" )
+			.fun<&MouseEvent::scrollY>( "scrollY" );
+
+		// Player Event object
+		module.class_<PlayerEvent>( "PlayerEvent" )
+			.base<Event>()
+			.constructor<>()
+			.fun<&PlayerEvent::dt>( "dt" )
+			.fun<&PlayerEvent::width>( "width" )
+			.fun<&PlayerEvent::height>( "height" );
+		
+		// Event types
+		const char* code = R"(
+			class KeyEventType {
+				static Press=130;
+				static Repeat=131;
+				static Down=132;
+				static Up=133;
+				static Input=134;
+			};
+			class MouseEventType {
+				static Over=100;
+				static Out=101;
+				static Move=102;
+				static Click=103;
+				static DblClick=104;
+				static Down=105;
+				static Up=106;
+				static ReleaseOutside=107;
+				static RightClick=108;
+				static RightDblClick=109;
+				static RightDown=110;
+				static RightUp=111;
+				static RightReleaseOutside=112;
+				static MiddleClick=113;
+				static MiddleDblClick=114;
+				static MiddleDown=115;
+				static MiddleUp=116;
+				static MiddleReleaseOutside=117;
+				static Scroll=118;
+			};
+			class PlayerEventType {
+				static Update=10;
+				static Render=11;
+				static Resize=12;
+			};
+		)";
+		context->eval(code, "<define>", JS_EVAL_TYPE_GLOBAL);
+
+		// Import the module
+		const char* import = R"(
+			import * as events from 'events';
+			globalThis.events = events;
+		)";
+		context->eval( import, "<import>", JS_EVAL_TYPE_MODULE );
+	}
 
 	void Script::bindDisplay() {
 
@@ -170,6 +288,8 @@ namespace derive {
 		auto& module = context->addModule( "display" );
 
 		// Display object
+		typedef HitArea*( DisplayObject::* DisplayObject_getHitAreaF )( void );
+		typedef void( DisplayObject::* DisplayObject_setHitAreaF )( HitArea* );
 		module.class_<DisplayObject>( "DisplayObject" )
 			.constructor<>()
 			.property<&DisplayObject::parent>( "parent" )
@@ -178,6 +298,18 @@ namespace derive {
 			.property<&DisplayObject::last>( "last" )
 			.property<&DisplayObject::first>( "next" )
 			.property<&DisplayObject::last>( "prev" )
+			.property<(DisplayObject_getHitAreaF)&DisplayObject::hitArea, (DisplayObject_setHitAreaF)&DisplayObject::hitArea>( "hitArea" )
+			.fun<&DisplayObject::x>( "x" )
+			.fun<&DisplayObject::y>( "y" )
+			.fun<&DisplayObject::width>( "width" )
+			.fun<&DisplayObject::height>( "height" )
+			.fun<&DisplayObject::scaleX>( "scaleX" )
+			.fun<&DisplayObject::scaleY>( "scaleY" )
+			.fun<&DisplayObject::rotation>( "rotation" )
+			.fun<&DisplayObject::originX>( "originX" )
+			.fun<&DisplayObject::originY>( "originY" )
+			.fun<&DisplayObject::visible>( "visible" )
+			.fun<&DisplayObject::alpha>( "alpha" )
 			.fun<&DisplayObject::mouse>( "mouse" )
 			.fun<&DisplayObject::addChild>( "addChild" )
 			.fun<&DisplayObject::addChildAt>( "addChildAt" )
@@ -190,9 +322,11 @@ namespace derive {
 			.fun<&DisplayObject::addAfter>( "addAfter" )
 			.fun<&DisplayObject::remove>( "remove" )
 			.fun<&DisplayObject::dispatch>( "dispatch" );
+			//.fun<&DisplayObject::listen>( "listen" );
 
 		// Image
 		module.class_<Image>( "Image" )
+			.base<DisplayObject>()
 			.constructor<string>()
 			.property<&Image::loaded>( "loaded" )
 			.property<&Image::width>( "width" )
@@ -202,6 +336,7 @@ namespace derive {
 
 		// Rive
 		module.class_<Rive>( "Rive" )
+			.base<DisplayObject>()
 			.constructor<string>()
 			.property<&Rive::loaded>( "loaded" ) // Get
 			.fun<&Rive::play>( "play" );
@@ -233,6 +368,7 @@ namespace derive {
 			.property<(Player_getColorARGBF)&Player::letterboxColor, (Player_setColorARGBF)&Player::letterboxColor>("letterboxColor")
 			.fun<&Player::run>("run");
 
+		// Modes
 		const char* code = R"(
 			class DisplayMode {
 				static Cover=0;
@@ -256,6 +392,8 @@ namespace derive {
 			};
 		)";
 		context->eval( code, "<define>", JS_EVAL_TYPE_GLOBAL );
+
+		// Import
 		const char* import = R"(
 			import * as core from 'core';
 			globalThis.Player = core.Player;

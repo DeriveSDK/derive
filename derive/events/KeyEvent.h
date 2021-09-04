@@ -16,7 +16,6 @@ namespace derive {
 		public:
 			KeyEvent() : Event() { }
 			KeyEvent( int type ) : Event( type ) { }
-			KeyEvent( int type, void* target ) : Event( type, target ) { }
 
 			// Key pressed and released
 			static const int Press = 130;

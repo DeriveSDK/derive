@@ -15,7 +15,6 @@ namespace derive {
 		public:
 			Event() {}
 			Event( int type ) : type( type ) {}
-			Event( int type, void* target ) : type( type ), target( target ) {}
 			virtual ~Event(){}
 
 			// The type of the event
@@ -24,16 +23,12 @@ namespace derive {
 			// How the event should propogate after firing
 			bool cancelled = false;
 
-			// The object that triggered the event
-			void* target = nullptr;
-
 			/**
 			 * @brief Reset all event properties back to defaults
 			 */
 			virtual void reset() {
 				type = 0;
 				cancelled = false;
-				target = nullptr;
 			}
 
 			/**

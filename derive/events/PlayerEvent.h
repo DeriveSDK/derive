@@ -14,16 +14,15 @@ namespace derive {
 		public:
 			PlayerEvent() : Event() { }
 			PlayerEvent(int type) : Event(type) { }
-			PlayerEvent(int type, void* target) : Event(type, target) { }
 
 			// Dispatched on every update cycle
 			static const int Update = 10;
 
 			// Dispatched on every render cycle
-			static const int Render = 12;
+			static const int Render = 11;
 
 			// Dispatched when the window is resized
-			static const int Resize = 15;
+			static const int Resize = 12;
 
 			// The number of seconds since the last update or render
 			// Available on Event::Update, Event::Render
@@ -59,11 +58,6 @@ namespace derive {
 			static PlayerEvent* Create(int type) {
 				PlayerEvent* event = Create();
 				event->type = type;
-				return event;
-			}
-			static PlayerEvent* Create(int type, void* target) {
-				PlayerEvent* event = Create(type);
-				event->target = target;
 				return event;
 			}
 		protected:
