@@ -29,6 +29,7 @@ namespace derive {
 
 		void bindStd();
 		void bindGeom();
+		void bindEvents();
 		void bindDisplay();
 		void bindCore();
 	};

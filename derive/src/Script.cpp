@@ -3,6 +3,7 @@
 #include "derive/Player.h"
 #include "derive/geom/Point.h"
 #include "derive/geom/Bounds.h"
+#include "derive/geom/Matrix.h"
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
 #include "derive/display/Image.h"
@@ -22,6 +23,7 @@ namespace derive {
 
 		bindStd();
 		bindGeom();
+		bindEvents();
 		bindDisplay();
 		bindCore();
 
@@ -131,12 +133,36 @@ namespace derive {
 			.fun<&Bounds::copy>( "copy" )
 			.fun<&Bounds::clone>( "clone" );
 
+		// Matrix
+		typedef void( Matrix::* Matrix_voidDouble )( double );
+		typedef void( Matrix::* Matrix_void3Double )( double, double, double );
+		typedef void( Matrix::* Matrix_voidPoint )( Point* );
+		typedef void( Matrix::* Matrix_voidPoint2Double )( Point*, double, double );
+		module.class_<Matrix>( "Matrix" )
+			.constructor<>()
+			.fun<&Matrix::apply>( "apply" )
+			.fun<&Matrix::identity>( "identity" )
+			.fun<&Matrix::concat>( "concat" )
+			.fun<&Matrix::invert>( "invert" )
+			.fun<(Matrix_voidPoint)&Matrix::transform>( "transform" )
+			.fun<(Matrix_voidPoint2Double)&Matrix::transform>( "transformAbout" )
+			.fun<(Matrix_voidPoint)&Matrix::inverseTransform>( "inverseTransform" )
+			.fun<(Matrix_voidPoint2Double)&Matrix::inverseTransform>( "inverseTransformAbout" )
+			.fun<(Matrix_voidDouble)&Matrix::rotate>( "rotate" )
+			.fun<(Matrix_void3Double)&Matrix::rotate>( "rotateAbout" )
+			.fun<&Matrix::scale>( "scale" )
+			.fun<&Matrix::translate>( "translate" )
+			.fun<&Matrix::copy>( "copy" )
+			.fun<&Matrix::clone>( "clone" );
+
 		const char* import = R"(
 			import * as geom from 'geom';
 			globalThis.geom = geom;
 		)";
 		context->eval( import, "<import>", JS_EVAL_TYPE_MODULE );
 	}
+
+	void Script::bindEvents() {}
 
 	void Script::bindDisplay() {
 
