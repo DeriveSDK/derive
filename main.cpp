@@ -21,10 +21,10 @@
  * This will build native c++  derive code as an executable. No javascript will be parsed or
  * executed at all.
  */
- //#define DERIVE_SCRIPT
+//#define DERIVE_SCRIPT
 
 #ifdef DERIVE_SCRIPT
-#include "Script.h"
+#include "derive/Script.h"
 #else
 #include "derive/Player.h"
 #include "derive/display/Rive.h"

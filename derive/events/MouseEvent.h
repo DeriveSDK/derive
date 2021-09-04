@@ -14,7 +14,6 @@ namespace derive {
 		public:
 			MouseEvent() : KeyEvent() { }
 			MouseEvent( int type ) : KeyEvent( type ) { }
-			MouseEvent( int type, void* target ) : KeyEvent( type, target ) { }
 
 			// Mouse moves over an object
 			static const int Over = 100;
@@ -110,11 +109,6 @@ namespace derive {
 			static MouseEvent* Create( int type ){
 				MouseEvent* event = Create();
 				event->type = type;
-				return event;
-			}
-			static MouseEvent* Create( int type, void* target ){
-				MouseEvent* event = Create( type );
-				event->target = target;
 				return event;
 			}
 		protected:

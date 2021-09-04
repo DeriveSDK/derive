@@ -5,7 +5,7 @@
 #define CONFIG_JSX
 #define CONFIG_STORAGE
 #define CONFIG_DEBUG
-#define BASECLASS_SUPPORT
+#define QUICKJSPP_BASECLASS
 #include "quickjspp.hpp"
 #include "derive/Player.h"
 #include <string>

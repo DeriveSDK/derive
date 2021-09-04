@@ -216,7 +216,7 @@ namespace derive {
 						// Over
 						if (!child->hitArea()->over) {
 							child->hitArea()->over = true;
-							MouseEvent* event = MouseEvent::Create( MouseEvent::Over, child );
+							MouseEvent* event = MouseEvent::Create( MouseEvent::Over );
 							event->localX = child->mouse->x;
 							event->localY = child->mouse->y;
 							event->stageX = stage()->mouse->x;
@@ -227,7 +227,6 @@ namespace derive {
 						// Step pending mouse events
 						auto it = _mouseEvents->begin();
 						while ( it != _mouseEvents->end() ) {
-							(*it)->target = child;
 							(*it)->localX = child->mouse->x;
 							(*it)->localY = child->mouse->y;
 							child->dispatch( (*it) );
@@ -244,7 +243,7 @@ namespace derive {
 					// Out
 					else if (child->hitArea()->over){
 						child->hitArea()->over = false;
-						MouseEvent* event = MouseEvent::Create( MouseEvent::Out, child );
+						MouseEvent* event = MouseEvent::Create( MouseEvent::Out );
 						event->localX = child->mouse->x;
 						event->localY = child->mouse->y;
 						event->stageX = stage()->mouse->x;
@@ -422,7 +421,7 @@ namespace derive {
 	}
 
 	void Player::onKey( int key, int scancode, int action, int mods ) {
-		KeyEvent* event = new KeyEvent( 0, stage() );
+		KeyEvent* event = new KeyEvent();
 		event->keyCode = key;
 		event->scanCode = scancode;
 		switch ( action ) {

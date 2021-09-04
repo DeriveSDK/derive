@@ -297,7 +297,8 @@ namespace derive {
 
 			/**
 			 * @brief Set the hit area for cursor/mouse events
-			 * Any existing hit area will be freed first.
+			 * Any existing hit area will be freed first. The displayObject will own the hitArea once it is
+			 * provided and will free it for you
 			 * @param hitArea The hit area, or null to remove it
 			 */
 			virtual void hitArea( HitArea* hitArea );
