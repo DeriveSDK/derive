@@ -20,8 +20,24 @@ namespace derive {
 			// unknown error
 			static const int Unknown = 0;
 
+			// The error name
 			string name = "";
+
+			// The error message
 			string message = "";
+
+			// The stack trace
+			string stack = "";
+
+			/**
+			 * @brief Clear event to defaults
+			 */
+			virtual void reset() {
+				Event::reset();
+				name = "";
+				message = "";
+				stack = "";
+			}
 		};
 
 	} // events

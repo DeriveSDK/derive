@@ -29,6 +29,7 @@
 #include "derive/Player.h"
 #include "derive/display/Rive.h"
 #include "derive/events/MouseEvent.h"
+#include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaCircle.h"
 #endif
 
@@ -86,8 +87,8 @@ public:
 		babyJuice->scaleY = 0.3;
 		juice->addChild( babyJuice );
 
-		//juice->listen( MouseEvent::move, [this](Event* event) -> bool { return this->onMouseMove( event ); } );
-		juice->listen( MouseEvent::down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
+		juice->listen( MouseEvent::Down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
+		stage()->listen( PlayerEvent::Update, [this](Event* event) -> bool { return this->onUpdate( (PlayerEvent*)event ); } );
 	}
 
 	~Main() {	
@@ -95,13 +96,9 @@ public:
 		delete juice;
 	}
 
-	void update( double dt ) {
-		juice->rotation += dt * 20;
-		babyJuice->rotation += dt * 40;
-	}
-
-	bool onMouseMove( Event* event ) {
-		cout << "mouse moved" << endl;
+	bool onUpdate( PlayerEvent* event ) {
+		juice->rotation += event->dt * 20;
+		babyJuice->rotation += event->dt * 40;
 		return true;
 	}
 
