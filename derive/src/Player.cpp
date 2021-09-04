@@ -1,5 +1,6 @@
 // Derive
 #include "../Player.h"
+#include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaRect.h"
 // Skia
 #include "core/SkColorSpace.h"
@@ -11,6 +12,7 @@
 
 using namespace std;
 using namespace derive::display;
+using namespace derive::events;
 
 namespace derive {
 
@@ -122,11 +124,15 @@ namespace derive {
 		delete _stageTransform;
 		delete _mouse;
 		delete _hitAreas;
-		for (auto event : *_mouseEvents) delete event;
+		for (auto event : *_mouseEvents) event->recycle();
 		delete _mouseEvents;
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 		instance = NULL;
+
+		// Destroy memory pool
+		MemoryPool::Destroy<MouseEvent>();
+		MemoryPool::Destroy<PlayerEvent>();
 	}
 
 	DisplayObject* Player::stage() {
@@ -210,13 +216,13 @@ namespace derive {
 						// Over
 						if (!child->hitArea()->over) {
 							child->hitArea()->over = true;
-							MouseEvent* event = new MouseEvent( MouseEvent::over, child );
+							MouseEvent* event = MouseEvent::Create( MouseEvent::Over, child );
 							event->localX = child->mouse->x;
 							event->localY = child->mouse->y;
 							event->stageX = stage()->mouse->x;
 							event->stageY = stage()->mouse->y;
 							child->dispatch( event );
-							delete event;
+							event->recycle();
 						}
 						// Step pending mouse events
 						auto it = _mouseEvents->begin();
@@ -226,8 +232,8 @@ namespace derive {
 							(*it)->localY = child->mouse->y;
 							child->dispatch( (*it) );
 							// remove event if receiver has stopped propagation
-							if ((*it)->propogate == PropogationType::None) {
-								delete *it;
+							if ((*it)->cancelled) {
+								(*it)->recycle();
 								it = _mouseEvents->erase( it );
 							}
 							else {
@@ -238,18 +244,18 @@ namespace derive {
 					// Out
 					else if (child->hitArea()->over){
 						child->hitArea()->over = false;
-						MouseEvent* event = new MouseEvent( MouseEvent::out, child );
+						MouseEvent* event = MouseEvent::Create( MouseEvent::Out, child );
 						event->localX = child->mouse->x;
 						event->localY = child->mouse->y;
 						event->stageX = stage()->mouse->x;
 						event->stageY = stage()->mouse->y;
 						child->dispatch( event );
-						delete event;
+						event->recycle();
 					}
 				}
 			}
 			// Clear mouse events
-			for (auto event : *_mouseEvents) delete event;
+			for (auto event : *_mouseEvents) event->recycle();
 			_mouseEvents->clear();
 
 			// Update
@@ -261,6 +267,10 @@ namespace derive {
 				stage()->preUpdate( _dtUpdateSeconds );
 				update( _dtUpdateSeconds );
 				stage()->update( _dtUpdateSeconds );
+				PlayerEvent* event = PlayerEvent::Create( PlayerEvent::Update );
+				event->dt = _dtUpdateSeconds;
+				stage()->dispatch( event );
+				event->recycle();
 				stage()->postUpdate( _dtUpdateSeconds );
 			}
 
@@ -281,6 +291,10 @@ namespace derive {
 
 				// Render
 				stage()->render( _surface, _dtRenderSeconds );
+				PlayerEvent* event = PlayerEvent::Create( PlayerEvent::Render );
+				event->dt = _dtRenderSeconds;
+				stage()->dispatch( event );
+				event->recycle();
 
 				// Post render process
 				int depth = 0;
@@ -294,7 +308,7 @@ namespace derive {
 
 				// Mouse move event
 				if ((_mouse->x != mx) || (_mouse->y != my)){
-					MouseEvent* event = new MouseEvent( MouseEvent::move );
+					MouseEvent* event = MouseEvent::Create( MouseEvent::Move );
 					event->stageX = stage()->mouse->x;
 					event->stageY = stage()->mouse->y;
 					event->moveX = _mouse->x - mx;
@@ -409,13 +423,12 @@ namespace derive {
 
 	void Player::onKey( int key, int scancode, int action, int mods ) {
 		KeyEvent* event = new KeyEvent( 0, stage() );
-		event->propogate = PropogationType::Downward;
 		event->keyCode = key;
 		event->scanCode = scancode;
 		switch ( action ) {
-			case GLFW_PRESS: event->type = KeyEvent::down; break;
-			case GLFW_RELEASE: event->type = KeyEvent::up; break;
-			case GLFW_REPEAT: event->type = KeyEvent::repeat; break;
+			case GLFW_PRESS: event->type = KeyEvent::Down; break;
+			case GLFW_RELEASE: event->type = KeyEvent::Up; break;
+			case GLFW_REPEAT: event->type = KeyEvent::Repeat; break;
 		}
 		if ( mods & GLFW_MOD_SHIFT ) event->shift = true;
 		if ( mods & GLFW_MOD_ALT ) event->alt = true;
@@ -431,22 +444,22 @@ namespace derive {
 	}
 
 	void Player::onMouseButton( int button, int action, int mods ) {
-		MouseEvent* event = new MouseEvent();
+		MouseEvent* event = MouseEvent::Create();
 		event->stageX = stage()->mouse->x;
 		event->stageY = stage()->mouse->y;
 		switch ( action ) {
 			case GLFW_PRESS:
 				switch ( button ) {
-					case GLFW_MOUSE_BUTTON_LEFT: event->type = MouseEvent::down; break;
-					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::rightDown; break;
-					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::middleDown; break;
+					case GLFW_MOUSE_BUTTON_LEFT: event->type = MouseEvent::Down; break;
+					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::RightDown; break;
+					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::MiddleDown; break;
 				}
 				break;
 			case GLFW_RELEASE:
 				switch ( button ) {
-					case GLFW_MOUSE_BUTTON_LEFT: event->type = MouseEvent::up; break;
-					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::rightUp; break;
-					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::middleUp; break;
+					case GLFW_MOUSE_BUTTON_LEFT: event->type = MouseEvent::Up; break;
+					case GLFW_MOUSE_BUTTON_RIGHT: event->type = MouseEvent::RightUp; break;
+					case GLFW_MOUSE_BUTTON_MIDDLE: event->type = MouseEvent::MiddleUp; break;
 				}
 				break;
 		}
@@ -460,7 +473,7 @@ namespace derive {
 	}
 
 	void Player::onMouseScroll( double xoffset, double yoffset ) {
-		MouseEvent* event = new MouseEvent( MouseEvent::scroll );
+		MouseEvent* event = MouseEvent::Create( MouseEvent::Scroll );
 		event->stageX = stage()->mouse->x;
 		event->stageY = stage()->mouse->y;
 		event->scrollX = xoffset;

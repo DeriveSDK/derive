@@ -57,9 +57,10 @@ namespace derive {
 
 			/**
 			 * @brief Listen for a specific event type
-			 * Example: listen( Event::Update, [this](Event* event) -> bool { return this.onUpdate(event); })
+			 * Example: listen( PlayerEvent::Update, [this](Event* event) -> bool { return this.onUpdate( (PlayerEvent*)event ); })
 			 * @param type The event type
 			 * @param callback The function listening for the event. The callback receives an Event and returns a boolean
+			 * @return Listener* The listener object
 			 */
 			Listener* listen( int type, Dispatch callback );
 

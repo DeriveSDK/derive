@@ -197,16 +197,15 @@ namespace derive {
 		typedef void( Player::* Player_setIntF )( int );
 		typedef colorARGB( Player::* Player_getColorARGBF )( );
 		typedef void( Player::* Player_setColorARGBF )(colorARGB);
-		module.class_<Player>( "Player" )
+		module.class_<Player>("Player")
 			.constructor<int, int, string, bool>()
-			.property<&Player::stage>( "stage" ) // Get
-			.property<(Player_getIntF)&Player::displayMode, (Player_setIntF)&Player::displayMode>( "displayMode" )
-			.property<(Player_getIntF)&Player::scaleMode, (Player_setIntF)&Player::scaleMode>( "scaleMode" )
-			.property<(Player_getIntF)&Player::alignMode, (Player_setIntF)&Player::alignMode>( "alignMode" )
-			.property<(Player_getColorARGBF)&Player::backgroundColor, (Player_setColorARGBF)&Player::backgroundColor>( "backgroundColor" )
-			.property<(Player_getColorARGBF)&Player::letterboxColor, (Player_setColorARGBF)&Player::letterboxColor>( "letterboxColor" )
-			.fun<&Player::run>( "run" )
-			.fun<&Player::update>( "update" );
+			.property<&Player::stage>("stage") // Get
+			.property<(Player_getIntF)&Player::displayMode, (Player_setIntF)&Player::displayMode>("displayMode")
+			.property<(Player_getIntF)&Player::scaleMode, (Player_setIntF)&Player::scaleMode>("scaleMode")
+			.property<(Player_getIntF)&Player::alignMode, (Player_setIntF)&Player::alignMode>("alignMode")
+			.property<(Player_getColorARGBF)&Player::backgroundColor, (Player_setColorARGBF)&Player::backgroundColor>("backgroundColor")
+			.property<(Player_getColorARGBF)&Player::letterboxColor, (Player_setColorARGBF)&Player::letterboxColor>("letterboxColor")
+			.fun<&Player::run>("run");
 
 		const char* code = R"(
 			class DisplayMode {

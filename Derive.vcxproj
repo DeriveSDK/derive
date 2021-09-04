@@ -211,7 +211,8 @@
     <ClCompile Include="derive\display\src\Image.cpp" />
     <ClCompile Include="derive\display\src\Rive.cpp" />
     <ClCompile Include="derive\events\src\Dispatcher.cpp" />
-    <ClCompile Include="derive\events\src\Event.cpp" />
+    <ClCompile Include="derive\events\src\MouseEvent.cpp" />
+    <ClCompile Include="derive\events\src\PlayerEvent.cpp" />
     <ClCompile Include="derive\geom\src\Bounds.cpp" />
     <ClCompile Include="derive\geom\src\Grid.cpp" />
     <ClCompile Include="derive\geom\src\Matrix.cpp" />

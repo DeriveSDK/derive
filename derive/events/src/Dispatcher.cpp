@@ -14,6 +14,7 @@ namespace derive {
 		}
 
 		void Dispatcher::clear() {
+			for (auto listener : listeners) delete listener;
 			listeners.clear();
 		}
 
@@ -31,6 +32,7 @@ namespace derive {
 			auto it = listeners.begin();
 			while ( it != listeners.end() ) {
 				if ( (( *it )->type == event->type ) && (!(*it)->callback(event))) {
+					delete *it;
 					it = listeners.erase( it );
 				}
 				else {
