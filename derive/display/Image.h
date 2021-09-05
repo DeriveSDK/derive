@@ -4,10 +4,10 @@
 #include "EmbeddedAssets.h"
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
-
 // Skia
 #include "core/SkBitmap.h"
-
+#include "core/SkImage.h"
+#include "core/SkMatrix.h"
 // Other
 #include <string>
 
@@ -23,7 +23,9 @@ namespace derive {
 		 */
 		class Image : public DisplayObject {
 		private:
-			SkBitmap* bitmap = nullptr;
+			SkBitmap* _bitmap = nullptr;
+			sk_sp<SkImage> _image = nullptr;
+			SkMatrix* _canvasMatrix = nullptr;
 			int _width;
 			int _height;
 		public:
@@ -75,31 +77,6 @@ namespace derive {
 			 * @return int The height
 			 */
 			virtual int height();
-
-			/**
-			 * @brief Return a pointer to the raw pixel data in RGBA format
-			 *
-			 * @return unsigned char* The image data
-			 */
-			virtual unsigned char* pixelData();
-
-			/**
-			 * @brief Return a single pixel
-			 * This method is slow. Access the pixel data directly for any real speed.
-			 * @param x The X coordinate
-			 * @param y The Y coordinate
-			 * @return colorRGBA The color as packed ARGB bytes
-			 */
-			virtual colorARGB getPixel( int x, int y );
-
-			/**
-			 * @brief Set a single pixel
-			 * This method is slow. Access the pixel data directly for any real speed.
-			 * @param x The X coordinate
-			 * @param y The Y coordinate
-			 * @param c The pixel color as packed ARGB bytes
-			 */
-			virtual void setPixel( int x, int y, colorARGB c );
 
 			/**
 			 * @brief Called every render step

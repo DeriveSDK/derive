@@ -6,6 +6,7 @@
 // Other
 #include <functional>
 #include <vector>
+#include <iostream>
 
 namespace derive {
 	namespace events {
@@ -13,7 +14,7 @@ namespace derive {
 		/**
 		 * @brief The function signature for dispatches
 		 */
-		typedef std::function<bool( Event* event )> Dispatch;
+		typedef std::function<bool(Event*)> Dispatch;
 
 		/**
 		 * @brief A dispatch listener
