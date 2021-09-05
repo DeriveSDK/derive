@@ -1,20 +1,28 @@
 // Derive
 #include "../Image.h"
-
+#include "derive/utils/SkiaTypes.h"
 // Skia
 #include "codec/SkCodec.h"
+#include "core/SkCanvas.h"
+#include "core/SkBitmap.h"
+#include "core/SkImageGenerator.h"
+
+using namespace derive::utils;
 
 namespace derive {
 	namespace display {
 
-		Image::Image() { }
+		Image::Image() {
+			_canvasMatrix = new SkMatrix();
+		}
 
-		Image::Image( string filename ) {
+		Image::Image( string filename ):Image() {
 			load( filename );
 		}
 
 		Image::~Image() {
-			if ( bitmap ) delete bitmap;
+			delete _canvasMatrix;
+			delete _bitmap;
 		}
 
 		bool Image::load( string filename ) {
@@ -30,17 +38,18 @@ namespace derive {
 			std::unique_ptr<SkCodec> codec( SkCodec::MakeFromData( SkData::MakeWithoutCopy( asset.data, asset.length ) ) );
 			if ( !codec ) return;
 
-			bitmap = new SkBitmap();
 			const SkImageInfo info = codec->getInfo();
+			_bitmap = new SkBitmap();
+			_bitmap->allocPixels( info );
+			codec->getPixels( info, _bitmap->getPixels(), _bitmap->rowBytes() );
+			_image = SkImage::MakeFromBitmap( *_bitmap );
 
-			bitmap->allocPixels( info );
-			codec->getPixels( info, bitmap->getPixels(), bitmap->rowBytes() );
 			_width = info.width();
 			_height = info.height();
 		}
 
 		bool Image::loaded() {
-			return ( bitmap != NULL );
+			return ( _image != NULL );
 		}
 
 		int Image::width() {
@@ -51,22 +60,13 @@ namespace derive {
 			return _height;
 		}
 
-		unsigned char* Image::pixelData() {
-			return nullptr;
-		}
-
-		colorARGB Image::getPixel( int x, int y ) {
-			if ( !bitmap ) return 0;
-			return bitmap->getColor( x, y );
-		}
-
-		void Image::setPixel( int x, int y, colorARGB c ) { }
-
 		void Image::render( SkSurface* surface, double dt ) {
-
-			surface->writePixels( *bitmap, (int)( x - originX ), (int)( y - originY ) );
-
-			return;
+			SkCanvas* canvas = surface->getCanvas();
+			canvas->save();
+			SkiaTypes::convert( _transform, _canvasMatrix );
+			canvas->concat( *_canvasMatrix );
+			canvas->drawImage( _image, 0, 0 );
+			canvas->restore();
 		}
 
 	} // display

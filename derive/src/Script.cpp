@@ -287,10 +287,19 @@ namespace derive {
 		// Create display module
 		auto& module = context->addModule( "display" );
 
+		// Dispatcher
+		module.class_<Dispatcher>( "Dispatcher" )
+			.constructor<>()
+			.fun<&Dispatcher::dispatch>( "dispatch" )
+			.fun<&Dispatcher::listen>( "listen" )
+			.fun<&Dispatcher::remove>( "remove" )
+			.fun<&Dispatcher::clear>( "clear" );
+
 		// Display object
 		typedef HitArea*( DisplayObject::* DisplayObject_getHitAreaF )( void );
 		typedef void( DisplayObject::* DisplayObject_setHitAreaF )( HitArea* );
 		module.class_<DisplayObject>( "DisplayObject" )
+			.base<Dispatcher>()
 			.constructor<>()
 			.property<&DisplayObject::parent>( "parent" )
 			.property<&DisplayObject::numChildren>( "numChildren" )
@@ -320,19 +329,15 @@ namespace derive {
 			.fun<&DisplayObject::indexOfChild>( "indexOfChild" )
 			.fun<&DisplayObject::addBefore>( "addBefore" )
 			.fun<&DisplayObject::addAfter>( "addAfter" )
-			.fun<&DisplayObject::remove>( "remove" )
-			.fun<&DisplayObject::dispatch>( "dispatch" );
-			//.fun<&DisplayObject::listen>( "listen" );
+			.fun<&DisplayObject::remove>( "remove" );
 
 		// Image
-		module.class_<Image>( "Image" )
+		module.class_<Image>("Image")
 			.base<DisplayObject>()
 			.constructor<string>()
-			.property<&Image::loaded>( "loaded" )
-			.property<&Image::width>( "width" )
-			.property<&Image::height>( "height" )
-			.fun<&Image::getPixel>( "getPixel" )
-			.fun<&Image::setPixel>( "setPixel" );
+			.property<&Image::loaded>("loaded")
+			.property<&Image::width>("width")
+			.property<&Image::height>("height");
 
 		// Rive
 		module.class_<Rive>( "Rive" )

@@ -28,6 +28,7 @@
 #else
 #include "derive/Player.h"
 #include "derive/display/Rive.h"
+#include "derive/display/Image.h"
 #include "derive/events/MouseEvent.h"
 #include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaCircle.h"
@@ -60,6 +61,7 @@ class Main : public Player {
 public:
 	Rive* juice;
 	Rive* babyJuice;
+	Image* logo;
 
 	Main() : Player( 1200, 800, "Hello world", false ) {
 		scaleMode( ScaleMode::Pixel );
@@ -86,6 +88,15 @@ public:
 		babyJuice->scaleX = 0.3;
 		babyJuice->scaleY = 0.3;
 		juice->addChild( babyJuice );
+
+		logo = new Image( "reset-icon.png" );
+		logo->originX = logo->width() / 2;
+		logo->originY = logo->height() / 2;
+		logo->x = 1080;
+		logo->y = 1080;
+		logo->scaleX = 0.75;
+		logo->scaleY = 0.75;
+		juice->addChild( logo );
 
 		juice->listen( MouseEvent::Down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
 		stage()->listen( PlayerEvent::Update, [this](Event* event) -> bool { return this->onUpdate( (PlayerEvent*)event ); } );

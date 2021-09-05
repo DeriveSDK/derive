@@ -5,6 +5,7 @@
 #include <string>
 
 #include "juiceriv.h"
+#include "reseticonpng.h"
 
 namespace derive {
 	namespace assets {
@@ -13,6 +14,7 @@ namespace derive {
 		public:
 			std::map<std::string, derive::assets::EmbeddedAssetData> items = {
 				{ "juice.riv", juiceriv },
+				{ "reset-icon.png", reseticonpng },
 			};
 		};
 

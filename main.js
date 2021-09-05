@@ -28,23 +28,35 @@ class Main extends Player {
 		this.babyJuice.scaleY = 0.3;
 		this.juice.addChild( this.babyJuice );
 
-		//juice.listen( MouseEventType.Down, globalOnMouseClick );
-		//stage.listen( PlayerEventType.Update, globalOnUpdate );
+		console.log('About to listen');
+		this.juice.listen( MouseEventType.Down, this.onMouseClick );
+		this.stage.listen( PlayerEventType.Update, this.onUpdate );
+		console.log('Done listening');
 
 		console.log("Constructed");
 	}
 
-	onUpdate( event ) {
-		juice.rotation += event.dt * 20;
-		babyJuice.rotation += event.dt * 40;
+	onUpdate( t ) {
+		console.log("onUpdate", t);
+		//juice.rotation += event.dt * 20;
+		//babyJuice.rotation += event.dt * 40;
 		return true;
 	}
 
-	onMouseClick( event ) {
-		babyJuice.x = juice.mouse.x;
-		babyJuice.y = juice.mouse.y;
-		return true;
+	onMouseClick( t ) {
+		console.log("onMouseClick", t);
+		//babyJuice.x = juice.mouse.x;
+		//babyJuice.y = juice.mouse.y;
+		return false;
 	}
+}
+
+function _onUpdate( event ) {
+	console.log('_onUpdate');
+}
+
+function _onMouseClick( event ) {
+	console.log('_onMouseClick');
 }
 
 main = new Main();
