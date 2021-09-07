@@ -1,4 +1,9 @@
+# create dependency lib folder if it doesn't exist yet
+mkdir -p ../lib/debug
+
+# go to skia and build it
 cd ../skia
+python tools/git-sync-deps
 bin/gn gen out/x64-debug --args=" \
     is_debug=true \
     is_official_build=false \
@@ -36,3 +41,6 @@ bin/gn gen out/x64-debug --args=" \
     extra_cflags=[\"/MTd\"] \
     "
 ninja skia -C out/x64-debug
+
+# copy library to dependency lib folder
+cp -R out/x64-debug/skia.lib ../lib/debug/skia.lib
