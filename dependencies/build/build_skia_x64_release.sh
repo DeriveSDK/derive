@@ -1,4 +1,9 @@
+# create dependency lib folder if it doesn't exist yet
+mkdir -p ../lib/release
+
+# go to skia and build it
 cd ../skia
+python tools/git-sync-deps
 bin/gn gen out/x64-release --args=" \
     is_debug=false \
     is_official_build=true \
@@ -35,3 +40,6 @@ bin/gn gen out/x64-release --args=" \
     clang_win = \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\Llvm\\x64\" \
     "
 ninja skia -C out/x64-release
+
+# copy library to dependency lib folder
+cp -R out/x64-release/skia.lib ../lib/release/skia.lib
