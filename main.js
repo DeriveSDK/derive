@@ -1,3 +1,4 @@
+
 class Main extends Player {
 	juice;
 	babyJuice;
@@ -37,26 +38,22 @@ class Main extends Player {
 	}
 
 	onUpdate( t ) {
-		console.log("onUpdate", t);
+		console.log("onUpdate");
+		console.log("  type: "+t.type);
+		console.log("  cancelled: "+t.cancelled);
 		//juice.rotation += event.dt * 20;
 		//babyJuice.rotation += event.dt * 40;
 		return true;
 	}
 
 	onMouseClick( t ) {
-		console.log("onMouseClick", t);
+		console.log("onMouseClick");
+		console.log("  type: "+t.type);
+		console.log("  cancelled: "+t.cancelled);
 		//babyJuice.x = juice.mouse.x;
 		//babyJuice.y = juice.mouse.y;
 		return false;
 	}
-}
-
-function _onUpdate( event ) {
-	console.log('_onUpdate');
-}
-
-function _onMouseClick( event ) {
-	console.log('_onMouseClick');
 }
 
 main = new Main();

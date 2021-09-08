@@ -288,12 +288,13 @@ namespace derive {
 		auto& module = context->addModule( "display" );
 
 		// Dispatcher
+		typedef void( Dispatcher::* Dispatcher_intF )( int );
 		module.class_<Dispatcher>( "Dispatcher" )
 			.constructor<>()
 			.fun<&Dispatcher::dispatch>( "dispatch" )
 			.fun<&Dispatcher::listen>( "listen" )
-			.fun<&Dispatcher::remove>( "remove" )
-			.fun<&Dispatcher::clear>( "clear" );
+			.fun<(Dispatcher_intF)&Dispatcher::unlisten>( "unlisten" )
+			.fun<&Dispatcher::unlistenAll>( "unlistenAll" );
 
 		// Display object
 		typedef HitArea*( DisplayObject::* DisplayObject_getHitAreaF )( void );

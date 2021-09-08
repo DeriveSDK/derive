@@ -21,6 +21,7 @@
  * This will build native c++  derive code as an executable. No javascript will be parsed or
  * executed at all.
  */
+
 //#define DERIVE_SCRIPT
 
 #ifdef DERIVE_SCRIPT
@@ -29,6 +30,7 @@
 #include "derive/Player.h"
 #include "derive/display/Rive.h"
 #include "derive/display/Image.h"
+#include "derive/display/Text.h"
 #include "derive/events/MouseEvent.h"
 #include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaCircle.h"
@@ -62,6 +64,7 @@ public:
 	Rive* juice;
 	Rive* babyJuice;
 	Image* logo;
+	Text* textarea;
 
 	Main() : Player( 1200, 800, "Hello world", false ) {
 		scaleMode( ScaleMode::Pixel );
@@ -98,6 +101,19 @@ public:
 		logo->scaleY = 0.75;
 		juice->addChild( logo );
 
+		Font::Load("roboto-medium.ttf","Roboto");
+
+		textarea = new Text();
+		textarea->x = 100;
+		textarea->y = 100;
+		textarea->text( "Hello, world!" );
+		textarea->font( "Roboto" );
+		textarea->size( 32 );
+		textarea->select( 7, 13 );
+		textarea->bold();
+		textarea->log();
+		juice->addChild( textarea );
+
 		juice->listen( MouseEvent::Down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
 		stage()->listen( PlayerEvent::Update, [this](Event* event) -> bool { return this->onUpdate( (PlayerEvent*)event ); } );
 	}
@@ -105,6 +121,8 @@ public:
 	~Main() {	
 		delete babyJuice;
 		delete juice;
+		delete logo;
+		delete textarea;
 	}
 
 	bool onUpdate( PlayerEvent* event ) {

@@ -10,16 +10,42 @@ namespace derive {
 		Dispatcher::Dispatcher() { }
 
 		Dispatcher::~Dispatcher() {
-			clear();
+			unlistenAll();
 		}
 
-		void Dispatcher::clear() {
+		void Dispatcher::unlistenAll() {
 			for (auto listener : listeners) delete listener;
 			listeners.clear();
 		}
 
-		void Dispatcher::remove( Listener* listener ) {
+		void Dispatcher::unlisten( Listener* listener ) {
 			listeners.erase( std::remove( listeners.begin(), listeners.end(), listener ), listeners.end() );
+		}
+
+		void Dispatcher::unlisten( int type ) {
+			auto it = listeners.begin();
+			while ( it != listeners.end() ) {
+				if ( ( *it )->type == type ) {
+					delete *it;
+					it = listeners.erase( it );
+				}
+				else {
+					++it;
+				}
+			}
+		}
+
+		void Dispatcher::unlisten( Dispatch callback ) {
+			auto it = listeners.begin();
+			while ( it != listeners.end() ) {
+				if ( &( *it )->callback == &callback ) {
+					delete *it;
+					it = listeners.erase( it );
+				}
+				else {
+					++it;
+				}
+			}
 		}
 
 		Listener* Dispatcher::listen( int type, Dispatch callback ) {

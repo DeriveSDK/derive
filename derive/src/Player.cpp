@@ -1,5 +1,6 @@
 // Derive
 #include "../Player.h"
+#include "derive/display/Font.h"
 #include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaRect.h"
 // Skia
@@ -129,6 +130,9 @@ namespace derive {
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 		instance = NULL;
+
+		// Free fonts
+		Font::Destroy();
 
 		// Destroy memory pool
 		MemoryPool::Destroy<MouseEvent>();

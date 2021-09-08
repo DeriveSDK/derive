@@ -42,19 +42,33 @@ namespace derive {
 			/**
 			 * @brief Destroy the Dispatcher object
 			 */
-			~Dispatcher();
+			virtual ~Dispatcher();
 
 			/**
 			 * @brief Remove all listeners
 			 */
-			void clear();
+			virtual void unlistenAll();
 
 			/**
-			 * @brief Remove a specific listener
+			 * @brief Remove listener
 			 *
 			 * @param listener
 			 */
-			void remove( Listener* listener );
+			void unlisten( Listener* listener );
+
+			/**
+			 * @brief Remove listeners by event type
+			 *
+			 * @param listener
+			 */
+			void unlisten( int type );
+
+			/**
+			 * @brief Remove listeners by callback
+			 *
+			 * @param listener
+			 */
+			void unlisten( Dispatch callback );
 
 			/**
 			 * @brief Listen for a specific event type

@@ -208,8 +208,10 @@
   <ItemGroup>
     <ClCompile Include="derive\display\src\Color.cpp" />
     <ClCompile Include="derive\display\src\DisplayObject.cpp" />
+    <ClCompile Include="derive\display\src\Font.cpp" />
     <ClCompile Include="derive\display\src\Image.cpp" />
     <ClCompile Include="derive\display\src\Rive.cpp" />
+    <ClCompile Include="derive\display\src\Text.cpp" />
     <ClCompile Include="derive\events\src\Dispatcher.cpp" />
     <ClCompile Include="derive\events\src\MouseEvent.cpp" />
     <ClCompile Include="derive\events\src\PlayerEvent.cpp" />
@@ -236,9 +238,11 @@
     <ClInclude Include="derive\display\DisplayMode.h" />
     <ClInclude Include="derive\display\DisplayObject.h" />
     <ClInclude Include="derive\display\FitMode.h" />
+    <ClInclude Include="derive\display\Font.h" />
     <ClInclude Include="derive\display\Image.h" />
     <ClInclude Include="derive\display\Rive.h" />
     <ClInclude Include="derive\display\ScaleMode.h" />
+    <ClInclude Include="derive\display\Text.h" />
     <ClInclude Include="derive\events\Dispatcher.h" />
     <ClInclude Include="derive\events\DragDropEvent.h" />
     <ClInclude Include="derive\events\ErrorEvent.h" />

@@ -6,6 +6,7 @@
 
 #include "juiceriv.h"
 #include "reseticonpng.h"
+#include "robotomediumttf.h"
 
 namespace derive {
 	namespace assets {
@@ -15,6 +16,7 @@ namespace derive {
 			std::map<std::string, derive::assets::EmbeddedAssetData> items = {
 				{ "juice.riv", juiceriv },
 				{ "reset-icon.png", reseticonpng },
+				{ "roboto-medium.ttf", robotomediumttf },
 			};
 		};
 
