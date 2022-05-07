@@ -33,7 +33,7 @@ set "folder=rive-tizen\"
 
 :: Repo URL and branch
 set "repo=https://github.com/DeriveSDK/rive-tizen.git"
-set "branch=update_to_latest_rive"
+set "branch=feature/update-to-latest-rive"
 
 :: Check if we are building release or debug (default)
 set "debug=1"
