@@ -1,31 +1,24 @@
 // Derive
 #include "../Image.h"
-#include "derive/utils/SkiaTypes.h"
-// Skia
-#include "codec/SkCodec.h"
-#include "core/SkCanvas.h"
-#include "core/SkBitmap.h"
-#include "core/SkImageGenerator.h"
+#include "derive/Player.h"
+#include "derive/utils/TvgTypes.h"
 
 using namespace derive::utils;
 
 namespace derive {
 	namespace display {
 
-		Image::Image() {
-			_canvasMatrix = new SkMatrix();
-		}
+		Image::Image() {}
 
 		Image::Image( string filename ):Image() {
 			load( filename );
 		}
 
-		Image::~Image() {
-			delete _canvasMatrix;
-			delete _bitmap;
-		}
-
 		bool Image::load( string filename ) {
+			_scene->clear();
+			_width = 0;
+			_height = 0;
+			_pictureRef = nullptr;
 			EmbeddedAssets assetLib;
 			auto it = assetLib.items.find( filename );
 			if ( it != assetLib.items.end() ) {
@@ -35,21 +28,20 @@ namespace derive {
 		}
 
 		void Image::loadFromAsset( EmbeddedAssetData asset ) {
-			std::unique_ptr<SkCodec> codec( SkCodec::MakeFromData( SkData::MakeWithoutCopy( asset.data, asset.length ) ) );
-			if ( !codec ) return;
+			_picture = tvg::Picture::gen();
+			if (_picture->load((const char*)asset.data, asset.length) != tvg::Result::Success) return;
 
-			const SkImageInfo info = codec->getInfo();
-			_bitmap = new SkBitmap();
-			_bitmap->allocPixels( info );
-			codec->getPixels( info, _bitmap->getPixels(), _bitmap->rowBytes() );
-			_image = SkImage::MakeFromBitmap( *_bitmap );
-
-			_width = info.width();
-			_height = info.height();
+			uint32_t w;
+			uint32_t h;
+			_picture->data(&w, &h);
+			_width = w;
+			_height = h;
+			_pictureRef = _picture.get();
+			_scene->push(std::move(_picture));
 		}
 
 		bool Image::loaded() {
-			return ( _image != NULL );
+			return _width && _height;
 		}
 
 		int Image::width() {
@@ -60,13 +52,11 @@ namespace derive {
 			return _height;
 		}
 
-		void Image::render( SkSurface* surface, double dt ) {
-			SkCanvas* canvas = surface->getCanvas();
-			canvas->save();
-			SkiaTypes::convert( _transform, _canvasMatrix );
-			canvas->concat( *_canvasMatrix );
-			canvas->drawImage( _image, 0, 0 );
-			canvas->restore();
+		void Image::render(Context* context, double dt ) {
+			if (!_pictureRef) return;
+			tvg::Matrix m = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+			TvgTypes::convert(_transform, &m);
+			_pictureRef->transform(m);
 		}
 
 	} // display

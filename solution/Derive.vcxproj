@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{AFE0037A-AC02-4908-85DB-C0F82B85B18F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Projects\derive\dependencies\lib\debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Projects\derive\dependencies\lib\release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>rive.lib;thorvg.lib;glfw3.lib;opengl32.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>rive.lib;thorvg.lib;glfw3.lib;opengl32.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\derive\display\src\Color.cpp" />
+    <ClCompile Include="..\derive\display\src\DisplayObject.cpp" />
+    <ClCompile Include="..\derive\display\src\Image.cpp" />
+    <ClCompile Include="..\derive\display\src\Rive.cpp" />
+    <ClCompile Include="..\derive\events\src\Dispatcher.cpp" />
+    <ClCompile Include="..\derive\events\src\MouseEvent.cpp" />
+    <ClCompile Include="..\derive\events\src\PlayerEvent.cpp" />
+    <ClCompile Include="..\derive\geom\src\Bounds.cpp" />
+    <ClCompile Include="..\derive\geom\src\Grid.cpp" />
+    <ClCompile Include="..\derive\geom\src\Matrix.cpp" />
+    <ClCompile Include="..\derive\geom\src\Point.cpp" />
+    <ClCompile Include="..\derive\render\src\Context.cpp" />
+    <ClCompile Include="..\derive\src\Player.cpp" />
+    <ClCompile Include="..\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\derive\assets\EmbeddedAsset.h" />
+    <ClInclude Include="..\derive\display\AlignMode.h" />
+    <ClInclude Include="..\derive\display\BitmapData.h" />
+    <ClInclude Include="..\derive\display\Color.h" />
+    <ClInclude Include="..\derive\display\DisplayMode.h" />
+    <ClInclude Include="..\derive\display\DisplayObject.h" />
+    <ClInclude Include="..\derive\display\FitMode.h" />
+    <ClInclude Include="..\derive\display\Image.h" />
+    <ClInclude Include="..\derive\display\Rive.h" />
+    <ClInclude Include="..\derive\display\ScaleMode.h" />
+    <ClInclude Include="..\derive\events\Dispatcher.h" />
+    <ClInclude Include="..\derive\events\DragDropEvent.h" />
+    <ClInclude Include="..\derive\events\ErrorEvent.h" />
+    <ClInclude Include="..\derive\events\Event.h" />
+    <ClInclude Include="..\derive\events\KeyEvent.h" />
+    <ClInclude Include="..\derive\events\MouseEvent.h" />
+    <ClInclude Include="..\derive\events\PlayerEvent.h" />
+    <ClInclude Include="..\derive\geom\Bounds.h" />
+    <ClInclude Include="..\derive\geom\Grid.h" />
+    <ClInclude Include="..\derive\geom\HitArea.h" />
+    <ClInclude Include="..\derive\geom\HitAreaCircle.h" />
+    <ClInclude Include="..\derive\geom\HitAreaRect.h" />
+    <ClInclude Include="..\derive\geom\Matrix.h" />
+    <ClInclude Include="..\derive\geom\Point.h" />
+    <ClInclude Include="..\derive\mem\MemoryPool.h" />
+    <ClInclude Include="..\derive\Player.h" />
+    <ClInclude Include="..\derive\render\Context.h" />
+    <ClInclude Include="..\derive\utils\Math.h" />
+    <ClInclude Include="..\derive\utils\RiveTypes.h" />
+    <ClInclude Include="..\derive\utils\TvgTypes.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

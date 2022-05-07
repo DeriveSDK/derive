@@ -15,141 +15,138 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="derive\display\src\Color.cpp">
+    <ClCompile Include="..\derive\display\src\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\display\src\DisplayObject.cpp">
+    <ClCompile Include="..\derive\display\src\DisplayObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\display\src\Image.cpp">
+    <ClCompile Include="..\derive\display\src\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\display\src\Rive.cpp">
+    <ClCompile Include="..\derive\display\src\Rive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\events\src\Dispatcher.cpp">
+    <ClCompile Include="..\derive\events\src\Dispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\geom\src\Bounds.cpp">
+    <ClCompile Include="..\derive\events\src\MouseEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\geom\src\Grid.cpp">
+    <ClCompile Include="..\derive\events\src\PlayerEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\geom\src\Point.cpp">
+    <ClCompile Include="..\derive\geom\src\Bounds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\src\Player.cpp">
+    <ClCompile Include="..\derive\geom\src\Grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\src\Script.cpp">
+    <ClCompile Include="..\derive\geom\src\Matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\derive\geom\src\Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\geom\src\Matrix.cpp">
+    <ClCompile Include="..\derive\src\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\render\src\RiveSkiaRenderer.cpp">
+    <ClCompile Include="..\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="derive\events\src\MouseEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="derive\events\src\PlayerEvent.cpp">
+    <ClCompile Include="..\derive\render\src\Context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="derive\Player.h">
+    <ClInclude Include="..\derive\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\Script.h">
+    <ClInclude Include="..\derive\assets\EmbeddedAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\EmbeddedAsset.h">
+    <ClInclude Include="..\derive\display\AlignMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\EmbeddedAssets.h">
+    <ClInclude Include="..\derive\display\BitmapData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\fonts_bangalorebdf.h">
+    <ClInclude Include="..\derive\display\Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\juiceriv.h">
+    <ClInclude Include="..\derive\display\DisplayMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\Loader.h">
+    <ClInclude Include="..\derive\display\DisplayObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\reseticonpng.h">
+    <ClInclude Include="..\derive\display\FitMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\assets\vikingcartoonriv.h">
+    <ClInclude Include="..\derive\display\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\AlignMode.h">
+    <ClInclude Include="..\derive\display\Rive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\BitmapData.h">
+    <ClInclude Include="..\derive\display\ScaleMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\Color.h">
+    <ClInclude Include="..\derive\events\Dispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\DisplayMode.h">
+    <ClInclude Include="..\derive\events\DragDropEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\DisplayObject.h">
+    <ClInclude Include="..\derive\events\ErrorEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\FitMode.h">
+    <ClInclude Include="..\derive\events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\Image.h">
+    <ClInclude Include="..\derive\events\KeyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\Rive.h">
+    <ClInclude Include="..\derive\events\MouseEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\display\ScaleMode.h">
+    <ClInclude Include="..\derive\events\PlayerEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\Dispatcher.h">
+    <ClInclude Include="..\derive\geom\Bounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\DragDropEvent.h">
+    <ClInclude Include="..\derive\geom\Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\ErrorEvent.h">
+    <ClInclude Include="..\derive\geom\HitArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\Event.h">
+    <ClInclude Include="..\derive\geom\HitAreaCircle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\KeyEvent.h">
+    <ClInclude Include="..\derive\geom\HitAreaRect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\MouseEvent.h">
+    <ClInclude Include="..\derive\geom\Matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\events\PlayerEvent.h">
+    <ClInclude Include="..\derive\geom\Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\geom\Bounds.h">
+    <ClInclude Include="..\derive\mem\MemoryPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\geom\Grid.h">
+    <ClInclude Include="..\derive\utils\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\geom\Point.h">
+    <ClInclude Include="..\derive\utils\RiveTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\utils\SkiaTypes.h">
+    <ClInclude Include="..\derive\render\Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="derive\render\RiveSkiaRenderer.h">
+    <ClInclude Include="..\derive\utils\TvgTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

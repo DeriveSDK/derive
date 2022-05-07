@@ -9,7 +9,9 @@ namespace derive {
 
 		/**
 		 * @brief A class that describes a point in 2D space
-		 *
+		 * | a c tx|
+		 * | b d ty|
+		 * | u v w |
 		 */
 		class Matrix {
 		public:
@@ -45,13 +47,13 @@ namespace derive {
 
 			/**
 			 * @brief Construct a new identity Matrix object
-			 * 
+			 *
 			 */
 			Matrix();
 
 			/**
 			 * @brief Construct a new Matrix object with the specified transformations
-			 * 
+			 *
 			 * @param scaleX Scale along the X axis
 			 * @param scaleY Scale along the Y axis
 			 * @param rotation Rotation in radians
@@ -66,11 +68,11 @@ namespace derive {
 			 * @brief Destroy the Point object
 			 *
 			 */
-			virtual ~Matrix(){}
+			virtual ~Matrix() {}
 
 			/**
 			 * @brief Apply the transformations to the current matrix
-			 * 
+			 *
 			 * @param scaleX Scale along the X axis
 			 * @param scaleY Scale along the Y axis
 			 * @param rotation Rotation in radians
@@ -83,21 +85,21 @@ namespace derive {
 
 			/**
 			 * @brief Transform a point using the matrix
-			 * 
+			 *
 			 * @param p (out) The point to transform
 			 */
 			void transform( Point* p );
 
 			/**
 			 * @brief Transform an offset point using the matrix
-			 * 
+			 *
 			 * @param p (out) The point to transform
 			 */
 			void transform( Point* p, double originX, double originY );
 
 			/**
 			 * @brief Transform a point using the matrix
-			 * 
+			 *
 			 * @param from The point to transform
 			 * @param to (out) The transformed point
 			 */
@@ -105,7 +107,7 @@ namespace derive {
 
 			/**
 			 * @brief Transform a point using the matrix and return a Point with the new values
-			 * 
+			 *
 			 * @param x The X coordinate
 			 * @param x The Y coordinate
 			 */
@@ -113,21 +115,21 @@ namespace derive {
 
 			/**
 			 * @brief Transform a point using the inverse matrix
-			 * 
+			 *
 			 * @param p (out) The point to transform
 			 */
 			void inverseTransform( Point* p );
 
 			/**
 			 * @brief Transform an offset point using the inverse matrix
-			 * 
+			 *
 			 * @param p (out) The point to transform
 			 */
 			void inverseTransform( Point* p, double ox, double oy );
 
 			/**
 			 * @brief Transform a point using the inverse matrix
-			 * 
+			 *
 			 * @param from The point to transform
 			 * @param to (out) The transformed point
 			 */
@@ -135,7 +137,7 @@ namespace derive {
 
 			/**
 			 * @brief Transform the point using the inverse matrix and return a Point with the new values
-			 * 
+			 *
 			 * @param x The X coordinate
 			 * @param x The Y coordinate
 			 */
@@ -149,27 +151,27 @@ namespace derive {
 
 			/**
 			 * @brief Concatenate a matrix to this one (combine)
-			 * 
+			 *
 			 * @param m The matrix to concatenate
 			 */
 			void concat( Matrix* m );
 
 			/**
 			 * @brief Invert the matrix
-			 * 
+			 *
 			 */
 			void invert();
 
 			/**
 			 * @brief Rotate the matrix
-			 * 
+			 *
 			 * @param angle The angle in radians
 			 */
 			void rotate( double angle );
 
 			/**
 			 * @brief Rotate the matrix about a point
-			 * 
+			 *
 			 * @param angle The angle in radians
 			 * @param ox The rotation point X coordinate
 			 * @param oy The rotation point Y coordinate
@@ -178,15 +180,15 @@ namespace derive {
 
 			/**
 			 * @brief Scale the matrix
-			 * 
-			 * @param sx 
-			 * @param sy 
+			 *
+			 * @param sx
+			 * @param sy
 			 */
 			void scale( double sx, double sy );
 
 			/**
-			 * @brief Translatet the matrix 
-			 * 
+			 * @brief Translatet the matrix
+			 *
 			 * @param dx The distance along the X axis
 			 * @param dy The distance along the Y axis
 			 */

@@ -2,8 +2,7 @@
 #include "../DisplayObject.h"
 #include "derive/geom/Bounds.h"
 #include "derive/utils/Math.h"
-// Skia
-#include "core/SkScalar.h"
+#include "derive/Player.h"
 // Other
 #include <algorithm>
 #include <iostream>
@@ -52,6 +51,7 @@ namespace derive {
 			mouse = new Point();
 			_bounds = new Bounds();
 			_transform = new Matrix();
+			_scene = tvg::Scene::gen();
 		}
 
 		DisplayObject::~DisplayObject() {
@@ -295,7 +295,7 @@ namespace derive {
 			}
 		}
 
-		void DisplayObject::preRender( SkSurface* surface, Matrix* transform, bool forceTransformUpdate, double dt ) {
+		void DisplayObject::preRender(Context* context, Matrix* transform, bool forceTransformUpdate, double dt) {
 			// XXX: Get dirty rect from old state before copy
 			bool changed = _state->copy( this );
 			if ( changed || forceTransformUpdate ) {
@@ -307,7 +307,10 @@ namespace derive {
 			}
 		}
 
-		void DisplayObject::postRender( SkSurface* surface, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* globalMouse ) {
+		void DisplayObject::postRender(Context* context, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* globalMouse) {
+			// Add scene to canvas
+			context->push(_scene.get());
+
 			// Set depth
 			_depth = depth++;
 
@@ -323,9 +326,9 @@ namespace derive {
 			// Step children
 			for ( auto child : _children ) {
 				if ( !child->visible ) continue;
-				child->preRender( surface, _transform, _dirty, dt );
-				child->render( surface, dt );
-				child->postRender( surface, _transform, dt, depth, hitAreas, globalMouse );
+				child->preRender(context, _transform, _dirty, dt);
+				child->render(context, dt);
+				child->postRender(context, _transform, dt, depth, hitAreas, globalMouse);
 			}
 
 			_dirty = false;

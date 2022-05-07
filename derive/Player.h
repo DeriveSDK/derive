@@ -8,20 +8,16 @@
 #include "derive/display/ScaleMode.h"
 #include "derive/events/MouseEvent.h"
 #include "derive/geom/Matrix.h"
+#include "derive/render/Context.h"
 // GLFW
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-// Skia
-#define SK_GL 1
-#include "gpu/gl/GrGLInterface.h" 
-#include "gpu/GrDirectContext.h"
-#include "core/SkSurface.h"
-#include "core/SkCanvas.h"
 // Other
 #include <string>
 #include <vector>
 
-using namespace std;
 using namespace derive;
+using namespace derive::render;
 using namespace derive::display;
 using namespace derive::geom;
 
@@ -32,8 +28,6 @@ namespace derive {
 		static Player* instance;
 	protected:
 		GLFWwindow* _window = nullptr;
-		SkSurface* _surface = nullptr;
-		GrDirectContext* _context = nullptr;
 		bool _isFullscreen = false;
 		colorARGB _bgColor = 0xffffffff;
 		colorARGB _lboxColor = 0x000000ff;
@@ -44,9 +38,11 @@ namespace derive {
 		int _alignMode = AlignMode::Default;
 		bool _mouseOver = false;
 		bool _mouseMoved = false;
-		Point* _mouse;
+		derive::geom::Point* _mouse;
 		vector<DisplayObject*>* _hitAreas;
 		vector<MouseEvent*>* _mouseEvents;
+		Context* _context;
+		GLuint _texture = 0;
 
 		double _lastUpdateSeconds;
 		double _dtUpdateSeconds;
@@ -56,8 +52,7 @@ namespace derive {
 		double _renderPeriod = 1.0 / 60.0; // 60fps
 
 		DisplayObject* _stage;
-		Matrix* _stageTransform;
-		SkRect* _stageRect;
+		derive::geom::Matrix* _stageTransform;
 		bool _dirty = true;
 
 	public:
@@ -67,6 +62,13 @@ namespace derive {
 		 * @return Player* The player
 		 */
 		static Player* getInstance();
+
+		/**
+		 * @brief Get the context from the Player singleton instance
+		 *
+		 * @return Context* The player's drawing context
+		 */
+		static Context* getContext();
 
 		/**
 		 * @brief Construct a new Player object
@@ -103,7 +105,7 @@ namespace derive {
 		 * User can override this to call code on every update cycle
 		 * @param dt Seconds since last update
 		 */
-		virtual void update( double dt ) { }
+		virtual void update( double dt ) {}
 
 		/**
 		 * @brief Set the display mode

@@ -1,11 +1,19 @@
 # Derive
 
+![Derive icon](/icon.png "Derive")
+
+## Status
+
+**Important:** Derive is pre-alpha. It is not yet production-ready, so please only use it for evaluation purposes. Major parts of the code may (and will) change without warning or backwards compatibility until the project reaches alpha.
+
+## What is derive?
+
 Derive is a flash-like cross-platform SDK and tool set for developing games. Derive was designed with Rive vector animations in mind, but of course you can also use Derive to make pixel-based games, include raster images, text, audio and more (and mix all of these!).
 
-Derive uses the Rive c++ runtime and is rendered with Skia. QuickJS is used for javascript scripting support.
+Derive uses the Rive c++ runtime and is rendered with ThorVG. QuickJS is used for javascript scripting support.
 
-#### License
-Derive is distributed under the MIT license (free for commercial and personal use). The dependencies use a variety of licenses, but are all compatible with the MIT license.
+## License
+Derive is distributed under the [MIT](https://opensource.org/licenses/MIT) license (free for commercial and personal use). The dependencies use a variety of licenses, but are all compatible with the MIT license.
 
 ## Usage
 
@@ -42,7 +50,7 @@ int main( void ) {
 }
 ````
 
-## Javascript
+## Javascript (currently disabled - work in progress)
 Write your code in JavaScript and launch the Derive debugger tool to run it. When you are happy, compile your JavaScript code to a standalone executable with qjsc (the QuickJS compiler). Example:
 
 ````
@@ -66,7 +74,7 @@ main.run();
 Derive would not be possible without the fantastic work of others. Derive requires:
 
 * [Rive-CPP](https://rive.app/). By Luigi Rosso and Guido Rosso. C++ Runtime for the Rive animation format. [MIT](https://opensource.org/licenses/MIT) license.
-* [Skia](https://skia.org/). By Google. 2D open-source graphics engine. [BSD](https://opensource.org/licenses/BSD-3-Clause) license.
+* [ThorVG](https://thorvg.org/). By the ThorVG team. Open-source vector graphics engine. [MIT](https://opensource.org/licenses/MIT) license.
 * [QuickJS](https://bellard.org/quickjs/). By Fabrice Bellard. ES2020 JavaScript engine for scripting. [MIT](https://opensource.org/licenses/MIT) license.
 * [quickjspp](https://github.com/ftk/quickjspp). By FTK. C++ wrapper for QuickJS. [COO](https://creativecommons.org/publicdomain/zero/1.0/) license.
 * [GLFW](https://www.glfw.org/). By Marcus Geelnard and Camilla Löwy. For window and events. [ZLIB](https://opensource.org/licenses/Zlib) license.

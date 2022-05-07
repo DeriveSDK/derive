@@ -1,20 +1,17 @@
 // Derive
 #include "../Rive.h"
-#include "derive/utils/SkiaTypes.h"
+#include "derive/Player.h"
+#include "derive/utils/RiveTypes.h"
 // Rive
 #include "rive/core/binary_reader.hpp"
-#include "skia_renderer.hpp"
-// Other
-#include <iostream>
 
-using namespace rive;
-using namespace derive::utils;
+using namespace derive::render;
 
 namespace derive {
 	namespace display {
 
 		Rive::Rive() {
-			_renderer = new RiveSkiaRenderer( nullptr );
+			_renderer = new rive::TvgRenderer(_scene.get());
 		}
 
 		Rive::Rive( string filename ): Rive() {
@@ -23,12 +20,9 @@ namespace derive {
 
 		Rive::~Rive() {
 			delete _renderer;
-			delete _animation;
-			delete _file;
 		}
 
 		bool Rive::load( string filename ) {
-			cout << "new Rive " << filename << endl;
 			EmbeddedAssets assetLib;
 			auto it = assetLib.items.find( filename );
 			if ( it != assetLib.items.end() ) {
@@ -38,16 +32,13 @@ namespace derive {
 		}
 
 		void Rive::loadFromAsset( EmbeddedAssetData asset ) {
-			cout << "  load from asset" << endl;
-			auto reader = BinaryReader( (uint8_t*)asset.data, asset.length );
-			delete _file;
-			_file = nullptr;
-			auto result = File::import( reader, &_file );
-			if ( result != ImportResult::success ) {
+			auto reader = rive::BinaryReader( (uint8_t*)asset.data, asset.length );
+			_file = rive::File::import(reader);
+			if (!_file) {
 				fprintf( stderr, "failed to import file\n" );
 				return;
 			}
-			_artboard = _file->artboard();
+			_artboard = _file->artboardDefault();
 			width = _artboard->width();
 			height = _artboard->height();
 			_artboard->advance( 0.0f );
@@ -60,33 +51,33 @@ namespace derive {
 		}
 
 		void Rive::play( int index ) {
-			delete _animation;
 			if ( index > _artboard->animationCount() ) index = _artboard->animationCount() - 1;
 			if ( index < 0 ) index = 0;
 
-			_animation = new LinearAnimationInstance( _artboard->animation( index ) );
+			_animation = _artboard->animationAt(index);
 		}
 
-		void Rive::update( double dt ) {
+		void Rive::update(double dt) {
 			if ( _artboard ) {
 				if ( _animation ) {
 					_animation->advance( dt );
-					_animation->apply( _artboard );
+					_animation->apply();
 				}
 				_artboard->advance( dt );
 			}
 			DisplayObject::update( dt );
 		}
 
-		void Rive::render( SkSurface* surface, double dt ) {
+		void Rive::render(Context* context, double dt) {
+			_scene->clear();
 			if ( _artboard ) {
-				_renderer->canvas = surface->getCanvas();
 				_renderer->save();
-				_renderer->transform( _transform );
-				_artboard->draw( _renderer );
+				rive::Mat2D _riveTransform;
+				derive::utils::RiveTypes::convert(_transform, &_riveTransform);
+				_renderer->transform(_riveTransform);
+				_artboard->draw(_renderer);
 				_renderer->restore();
 			}
-			DisplayObject::render( surface, dt );
 		}
 
 	} // display

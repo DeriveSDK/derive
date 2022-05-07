@@ -5,25 +5,25 @@
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
 #include "derive/geom/Bounds.h"
-#include "derive/render/RiveSkiaRenderer.h"
+#include "derive/render/Context.h"
 // Rive
 #include "rive/artboard.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
 #include "rive/file.hpp"
-// Skia
-#include "core/SkMatrix.h"
+// Rive-tizen
+#include "tvg_renderer.hpp"
 // Other
 #include <string>
 
-using namespace rive;
 using namespace derive::assets;
-using namespace derive::render;
 
 namespace derive {
 	namespace display {
 
 		/**
 		 * @brief A rive animation class
+		 * 
+		 * TODO: State machines
 		 */
 		class Rive : public DisplayObject {
 		public:
@@ -74,26 +74,25 @@ namespace derive {
 			 * possible. Do not use this to perform any drawing or rendering (@see render).
 			 * @param dt The time, in seconds, since the last call to update
 			 */
-			virtual void update( double dt );
+			virtual void update( double dt ) override;
 
 			/**
 			 * @brief Called every render step
 			 * Usually called less often than update (@see update).
 			 * Use this to perform any drawing or rendering operatons.
-			 * @param drawingContext The context to draw to
 			 * @param dt The time, in seconds, since the last call to update
 			 */
-			virtual void render( SkSurface* surface, double dt );
+			virtual void render(Context* context, double dt) override;
 
 		protected:
 			// The file for this rive
-			File* _file = nullptr;
+			std::unique_ptr<rive::File> _file = nullptr;
 			// The artboard for this rive
-			Artboard* _artboard = nullptr;
+			std::unique_ptr<rive::ArtboardInstance> _artboard = nullptr;
 			// The animation instance
-			LinearAnimationInstance* _animation = nullptr;
+			std::unique_ptr<rive::LinearAnimationInstance> _animation = nullptr;
 			// The renderer
-			RiveSkiaRenderer* _renderer;
+			rive::TvgRenderer* _renderer = nullptr;
 
 			/**
 			 * @brief Load from an embedded asset

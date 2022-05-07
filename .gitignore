@@ -3,6 +3,15 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Temmporary files
+temp
+
+# Derive private folders
+building
+dependencies
+!dependencies/build-*
+assets/include
+
 # User-specific files
 *.rsuser
 *.suo
@@ -32,10 +41,20 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-# Visual Studio 2015/2017 cache/options directory
+# Dependencies
+dependencies/libjpeg-turbo
+dependencies/libpng
+dependencies/zlib
+dependencies/thorvg-old
+dependencies/thorvg
+
+# Visual Studio cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
+
+# Visual Studio build files
+solution/x64
 
 # VS code directory
 .vscode
@@ -178,6 +197,9 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
+
+# Docs
+docs
 
 # Click-Once directory
 publish/

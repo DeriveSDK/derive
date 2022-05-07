@@ -2,28 +2,28 @@
 
 /**
  * Memory pooling
- * 
+ *
  * Usage for objects that implement pooling
- * 
+ *
  *      // Create a new object (or get from pool)
  *      MyObj* obj = MyObj::Create();
- * 
+ *
  *      // Delete the object (or return to pool)
  *      obj->recycle;
  *      obj = nullptr; // recommended
- * 
+ *
  *      // On application exit (frees pool and remaining pooled objects)
  *      MemoryPool::Destroy<MyObj>();
- *      
+ *
  * To implement object pooling your class must
- * 
+ *
  *      1) extend MemoryPool
  *      2) have a static Pool property (list of pooled objects)
  *      3) implement _getPool (to return the pool)
  *      4) implement the static Create factory method (can overload for multiple constructors)
  *      5) implement reset (to reset the object ready for next re-use)
- * 
- *      See derive::events::Event and derive::events::MouseEvent for an example 
+ *
+ *      See derive::events::Event and derive::events::MouseEvent for an example
  */
 
 #include <list>
@@ -40,9 +40,9 @@ namespace derive {
 		public:
 			/**
 			 * @brief Destroy the Pool object
-			 * 
+			 *
 			 */
-			virtual ~MemoryPool(){}
+			virtual ~MemoryPool() {}
 
 			/**
 			 * @brief Set all object properties back to defaults ready for re-use
@@ -53,14 +53,14 @@ namespace derive {
 			 * Create factory method. Uses memory pool for object re-use.
 			 */
 			template<class T>
-			static MemoryPool* Create(){
+			static MemoryPool* Create() {
 				MemoryPool* obj;
 				list<MemoryPool*>* pool = T::Pool;
-				if (pool && pool->size() > 0){
+				if ( pool && pool->size() > 0 ) {
 					obj = pool->back();
 					pool->pop_back();
 				}
-				else{
+				else {
 					obj = new T();
 				}
 				return obj;
@@ -69,9 +69,9 @@ namespace derive {
 			/**
 			 * Return this object to the pool
 			 */
-			void recycle(){
+			void recycle() {
 				list<MemoryPool*>* pool = _getPool();
-				if (pool) {
+				if ( pool ) {
 					this->reset();
 					pool->push_back( this );
 				}
@@ -86,9 +86,9 @@ namespace derive {
 			 * and recycle will just call new and delete)
 			 */
 			template<class T>
-			static void Destroy(){
+			static void Destroy() {
 				list<MemoryPool*>* pool = T::Pool;
-				for (auto event : *pool) delete event;
+				for ( auto event : *pool ) delete event;
 				delete pool;
 				T::Pool = nullptr;
 			}
@@ -97,7 +97,7 @@ namespace derive {
 			/**
 			 * Pool getter
 			 */
-			virtual list<MemoryPool*>* _getPool(){
+			virtual list<MemoryPool*>* _getPool() {
 				return nullptr;
 			}
 		};

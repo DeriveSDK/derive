@@ -4,10 +4,8 @@
 #include "EmbeddedAssets.h"
 #include "derive/display/Color.h"
 #include "derive/display/DisplayObject.h"
-// Skia
-#include "core/SkBitmap.h"
-#include "core/SkImage.h"
-#include "core/SkMatrix.h"
+// ThorVG
+#include <thorvg.h>
 // Other
 #include <string>
 
@@ -23,11 +21,10 @@ namespace derive {
 		 */
 		class Image : public DisplayObject {
 		private:
-			SkBitmap* _bitmap = nullptr;
-			sk_sp<SkImage> _image = nullptr;
-			SkMatrix* _canvasMatrix = nullptr;
 			int _width;
 			int _height;
+			unique_ptr<tvg::Picture> _picture;
+			tvg::Picture* _pictureRef;
 		public:
 			/**
 			 * @brief Construct a new Image object
@@ -45,7 +42,7 @@ namespace derive {
 			/**
 			 * @brief Destroy the Image object
 			 */
-			virtual ~Image();
+			virtual ~Image() {}
 
 			/**
 			 * @brief Load image file by path
@@ -82,10 +79,10 @@ namespace derive {
 			 * @brief Called every render step
 			 * Usually called less often than update (@see update).
 			 * Use this to perform any drawing or rendering operatons.
-			 * @param drawingContext The context to draw to
+			 * @param canvas The canvas to draw to
 			 * @param dt The time, in seconds, since the last call to update
 			 */
-			virtual void render( SkSurface* surface, double dt );
+			void render(Context* context, double dt) override;
 
 		protected:
 			/**

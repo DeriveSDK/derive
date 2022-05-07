@@ -10,8 +10,9 @@
 #include "derive/geom/Point.h"
 #include "derive/geom/HitArea.h"
 #include "derive/geom/Matrix.h"
-// Skia
-#include "core/SkSurface.h"
+#include "derive/render/Context.h"
+// ThorVG
+#include <thorvg.h>
 // QuickJS(pp)
 #ifdef DERIVE_SCRIPT
 #include "quickjspp.hpp"
@@ -23,6 +24,7 @@
 using namespace std;
 using namespace derive::events;
 using namespace derive::geom;
+using namespace derive::render;
 
 namespace derive {
 	namespace display {
@@ -91,9 +93,10 @@ namespace derive {
 			bool _dirty = false;
 			Grid* _grid;
 			Bounds* _bounds;
-			Matrix* _transform; // The global transform
+			derive::geom::Matrix* _transform; // The global transform
 			HitArea* _hitArea = nullptr;
 			int _depth = 0;
+			unique_ptr<tvg::Scene> _scene;
 
 			#ifdef DERIVE_SCRIPT
 			// Call JS update
@@ -350,13 +353,12 @@ namespace derive {
 			/**
 			 * @brief Preparation steps for the render
 			 * Generally do not override this unless you know what you are doing (@see render)
-			 * XXX: Use derive transform instead of skia
-			 * @param surface The Skia surface to draw to
+			 * @param context The context to draw to (contains the buffer)
 			 * @param transform The global transform
 			 * @param forceTransformUpdate Force the trasnform to be updated (usually because the parent has changed)
 			 * @param dt The time, in seconds, since the last call to render
 			 */
-			virtual void preRender( SkSurface* surface, Matrix* transform, bool forceTransformUpdate, double dt );
+			virtual void preRender(Context* context, Matrix* transform, bool forceTransformUpdate, double dt);
 
 			/**
 			 * @brief Called every render step
@@ -364,21 +366,20 @@ namespace derive {
 			 * Usually called less often than update (@see update).
 			 * Use this to perform any drawing or rendering operatons.
 			 * @see update
-			 * @param surface The Skia surface to draw to
+			 * @param context The context to draw to (contains the buffer)
 			 * @param dt The time, in seconds, since the last call to render
 			 */
-			virtual void render( SkSurface* surface, double dt ) { }
+			virtual void render(Context* context, double dt) {}
 
 			/**
 			 * @brief Called after render to continue stepping the display list
 			 * Generally do not override this unless you know what you are doing (@see render)
-			 * XXX: Use derive transform instead of skia
-			 * @param surface The Skia surface to draw to
+			 * @param context The context to draw to (contains the buffer)
 			 * @param transform The global transform
 			 * @param dt The time, in seconds, since the last call to render
 			 * @param depth The global depth
 			 */
-			virtual void postRender( SkSurface* surface, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* mouse );
+			virtual void postRender(Context* context, Matrix* transform, double dt, int &depth, vector<DisplayObject*>* hitAreas, Point* mouse);
 		};
 
 	} // display

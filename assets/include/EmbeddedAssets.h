@@ -4,8 +4,9 @@
 #include <map>
 #include <string>
 
+#include "buggyriv.h"
+#include "deriveiconpng.h"
 #include "juiceriv.h"
-#include "reseticonpng.h"
 
 namespace derive {
 	namespace assets {
@@ -13,8 +14,9 @@ namespace derive {
 		class EmbeddedAssets {
 		public:
 			std::map<std::string, derive::assets::EmbeddedAssetData> items = {
+				{ "buggy.riv", buggyriv },
+				{ "derive-icon.png", deriveiconpng },
 				{ "juice.riv", juiceriv },
-				{ "reset-icon.png", reseticonpng },
 			};
 		};
 

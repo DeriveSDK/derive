@@ -2,9 +2,24 @@ import json
 import os
 import re
 
-assetroot = ".."+os.sep+"assets"
-assetout = ".."+os.sep+"assets"+os.sep+"include"
+# Generate asset files
+# Usage:
+#   python build-assets.py
+#
+# Steps through all assets in this folder (including subfolders) and builds
+# c-headers for them. Assets are added to EmbeddedAssets.h for referenceing
+# within a Derive project.
 
+# Where to look for assets
+assetroot = "."
+
+# Where to generate compiled assets
+assetout = "."+os.sep+"include"
+
+# Files to ignore
+ignore = ["build-assets.py", "build-assets.bat"]
+
+###### Script starts
 print("Building assets")
 
 
@@ -63,6 +78,10 @@ if os.path.exists(assetroot):
     for root, d_names, f_names in os.walk(assetroot):
         if not root == assetout:
             for f in f_names:
+                # Ignore specific files
+                if f in ignore:
+                    print("Skipping "+f)
+                    continue
                 process = True
                 filepath = os.path.join(root, f)
                 fileslug = slugify(filepath[len(assetroot)+1:])

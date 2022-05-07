@@ -4,7 +4,7 @@ namespace derive {
 	namespace display {
 
 		/**
-		 * @brief Packed color type with 8-bit R,G,B, A components
+		 * @brief Packed color type with 8-bit A, R,G,B components
 		 */
 		typedef unsigned long colorARGB;
 

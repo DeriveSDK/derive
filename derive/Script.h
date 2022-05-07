@@ -2,10 +2,7 @@
 
 #define JS_STRICT_NAN_BOXING
 #define CONFIG_BIGNUM
-#define CONFIG_JSX
-#define CONFIG_STORAGE
-#define CONFIG_DEBUG
-#define QUICKJSPP_BASECLASS
+#define CONFIG_DEBUGGER
 #include "quickjspp.hpp"
 #include "derive/Player.h"
 #include <string>

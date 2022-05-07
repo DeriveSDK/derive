@@ -2,15 +2,13 @@
 #include "../Player.h"
 #include "derive/events/PlayerEvent.h"
 #include "derive/geom/HitAreaRect.h"
-// Skia
-#include "core/SkColorSpace.h"
 // Other
 #include <algorithm>
 #include <math.h>
 #include <string.h>
+#include <thread>
 #include <iostream>
 
-using namespace std;
 using namespace derive::display;
 using namespace derive::events;
 
@@ -22,7 +20,14 @@ namespace derive {
 		return Player::instance;
 	}
 
-	void _deriveOnWindowResize( GLFWwindow* window, int width, int height ) {
+	Context* Player::getContext() {
+		if (Player::getInstance()) {
+			return Player::instance->_context;
+		}
+		return nullptr;
+	}
+
+	void _deriveOnFramebufferResize( GLFWwindow* window, int width, int height ) {
 		if ( Player::getInstance() ) {
 			Player::getInstance()->onResize();
 		}
@@ -58,6 +63,14 @@ namespace derive {
 		}
 	}
 
+	void traceGlErrors(string message = "") {
+		GLenum err;
+		while ((err = glGetError()) != GL_NO_ERROR)
+		{
+			cout << "OpenGL Error" << (message.length()?" ("+message+")" : "") << ": " << hex << err << dec << endl;
+		}
+	}
+
 	Player::Player( int width, int height, string name, bool fullscreen ) {
 		// Check we are a singleton
 		if ( instance ) {
@@ -86,6 +99,7 @@ namespace derive {
 		if ( fullscreen ) this->fullscreen( true );
 		glfwMakeContextCurrent( _window );
 		glfwSwapInterval( 1 ); // Vsync
+		glEnable(GL_TEXTURE_2D);
 		// Mouse
 		_mouseOver = glfwGetWindowAttrib( _window, GLFW_HOVERED );
 		double mx;
@@ -95,12 +109,15 @@ namespace derive {
 		_hitAreas = new vector<DisplayObject*>();
 		_mouseEvents = new vector<MouseEvent*>();
 		// Callbacks
-		glfwSetWindowSizeCallback( _window, _deriveOnWindowResize ); // Window resize
+		glfwSetFramebufferSizeCallback( _window, _deriveOnFramebufferResize); // Framebuffer / Window resize
 		glfwSetKeyCallback( _window, _deriveOnKey ); // Key
 		glfwSetCursorEnterCallback( _window, _deriveOnMouseEnterLeave ); // Mouse residency
 		glfwSetMouseButtonCallback( _window, _deriveOnMouseButton ); // Mouse button
 		glfwSetScrollCallback( _window, _deriveOnMouseScroll ); // Mouse scroll
 		glfwSetDropCallback( _window, _deriveOnFileDrop ); // File/folder drop target
+		// Initialise ThorVG (tvg) and drawing context
+		tvg::Initializer::init(tvg::CanvasEngine::Sw, std::thread::hardware_concurrency());
+		_context = new Context();
 		// Stage
 		_stage = new DisplayObject();
 		_stage->stage( _stage );
@@ -108,7 +125,6 @@ namespace derive {
 		_stage->width = width;
 		_stage->height = height;
 		_stageTransform = new Matrix();
-		_stageRect = new SkRect();
 		// Force resize to create the render surface
 		onResize();
 		// Start timing
@@ -117,16 +133,15 @@ namespace derive {
 	}
 
 	Player::~Player() {
-		delete _surface;
-		delete _context;
 		delete _stage;
-		delete _stageRect;
 		delete _stageTransform;
 		delete _mouse;
 		delete _hitAreas;
-		for (auto event : *_mouseEvents) event->recycle();
+		for ( auto event : *_mouseEvents ) event->recycle();
 		delete _mouseEvents;
-		glfwDestroyWindow(_window);
+		delete _context;
+		tvg::Initializer::term(tvg::CanvasEngine::Sw);
+		glfwDestroyWindow( _window );
 		glfwTerminate();
 		instance = NULL;
 
@@ -212,9 +227,9 @@ namespace derive {
 			// Mouse events: over, out, move
 			if ( _hitAreas->size() > 0 ) {
 				for ( auto child : *_hitAreas ) {
-					if (child->hitArea()->hit(child->mouse)) {
+					if ( child->hitArea()->hit( child->mouse ) ) {
 						// Over
-						if (!child->hitArea()->over) {
+						if ( !child->hitArea()->over ) {
 							child->hitArea()->over = true;
 							MouseEvent* event = MouseEvent::Create( MouseEvent::Over );
 							event->localX = child->mouse->x;
@@ -227,12 +242,12 @@ namespace derive {
 						// Step pending mouse events
 						auto it = _mouseEvents->begin();
 						while ( it != _mouseEvents->end() ) {
-							(*it)->localX = child->mouse->x;
-							(*it)->localY = child->mouse->y;
-							child->dispatch( (*it) );
+							( *it )->localX = child->mouse->x;
+							( *it )->localY = child->mouse->y;
+							child->dispatch( ( *it ) );
 							// remove event if receiver has stopped propagation
-							if ((*it)->cancelled) {
-								(*it)->recycle();
+							if ( ( *it )->cancelled ) {
+								( *it )->recycle();
 								it = _mouseEvents->erase( it );
 							}
 							else {
@@ -241,7 +256,7 @@ namespace derive {
 						}
 					}
 					// Out
-					else if (child->hitArea()->over){
+					else if ( child->hitArea()->over ) {
 						child->hitArea()->over = false;
 						MouseEvent* event = MouseEvent::Create( MouseEvent::Out );
 						event->localX = child->mouse->x;
@@ -254,7 +269,7 @@ namespace derive {
 				}
 			}
 			// Clear mouse events
-			for (auto event : *_mouseEvents) event->recycle();
+			for ( auto event : *_mouseEvents ) event->recycle();
 			_mouseEvents->clear();
 
 			// Update
@@ -278,19 +293,24 @@ namespace derive {
 			if ( _dtRenderSeconds >= _renderPeriod ) {
 				_lastRenderSeconds = nowSeconds;
 
+				// Clear context
+				_context->clear(_bgColor);
+
 				// Clip to the stage
+				/*
 				// XXX: Clip to dirty area
-				_surface->getCanvas()->clear( _lboxColor );
-				_surface->getCanvas()->save();
-				_surface->getCanvas()->clipRect( *_stageRect );
-				_surface->getCanvas()->clear( _bgColor );
+				_context->clip(nullptr);
+				_context->fill(_lboxColor);
+				_context->clip(stage()->bounds());
+				_context->fill(_bgColor);
+				*/
 
 				// Pre-render process
-				stage()->preRender( _surface, _stageTransform, _dirty, _dtRenderSeconds );
+				stage()->preRender(_context, _stageTransform, _dirty, _dtRenderSeconds);
 
 				// Render
-				stage()->render( _surface, _dtRenderSeconds );
-				PlayerEvent* event = PlayerEvent::Create( PlayerEvent::Render );
+				stage()->render(_context, _dtRenderSeconds );
+				PlayerEvent* event = PlayerEvent::Create( PlayerEvent::Render);
 				event->dt = _dtRenderSeconds;
 				stage()->dispatch( event );
 				event->recycle();
@@ -301,12 +321,11 @@ namespace derive {
 				double my = _mouse->y;
 				glfwGetCursorPos( _window, &_mouse->x, &_mouse->y );
 				_hitAreas->clear();
-				stage()->postRender( _surface, _stageTransform, _dtRenderSeconds, depth, _hitAreas, _mouse );
-				_surface->getCanvas()->restore();
+				stage()->postRender(_context, _stageTransform, _dtRenderSeconds, depth, _hitAreas, _mouse);
 				_dirty = false;
 
 				// Mouse move event
-				if ((_mouse->x != mx) || (_mouse->y != my)){
+				if ( ( _mouse->x != mx ) || ( _mouse->y != my ) ) {
 					MouseEvent* event = MouseEvent::Create( MouseEvent::Move );
 					event->stageX = stage()->mouse->x;
 					event->stageY = stage()->mouse->y;
@@ -315,8 +334,32 @@ namespace derive {
 					_mouseEvents->push_back( event );
 				}
 
-				// Finalize
-				_context->flush();
+				// Render
+				_context->render();
+
+				// XXX: NEED TO CREATE DEBUG BUILDS OF LIBRARIES
+				// And also create a proper release config for VS (debug is actually release)
+				glClearColor(1.0f, 0.6f, 0.0f, 1.0f);
+				glClear(GL_COLOR_BUFFER_BIT);
+				glBindTexture(GL_TEXTURE_2D, _texture);
+				glTexSubImage2D(
+					GL_TEXTURE_2D,
+					0,
+					0, 0,
+					_context->width(), _context->height(),
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					(void*)_context->buffer()
+				);
+				glBegin(GL_QUADS);
+				glTexCoord2f(0, 0); glVertex2f(0, 0);
+				glTexCoord2f(1, 0); glVertex2f(width, 0);
+				glTexCoord2f(1, 1); glVertex2f(width, height);
+				glTexCoord2f(0, 1); glVertex2f(0, height);
+				glEnd();
+				glBindTexture(GL_TEXTURE_2D, 0);
+				traceGlErrors("glEnd");
+
 				glfwSwapBuffers( _window );
 			}
 
@@ -328,29 +371,39 @@ namespace derive {
 	void Player::onResize() {
 		glfwGetWindowSize( _window, &width, &height );
 
-		delete _surface;
-		delete _context;
+		// Create a new framebuffer in the context
+		_context->create(width, height);
 
-		GrContextOptions options;
-		_context = GrDirectContext::MakeGL( nullptr, options ).release();
+		// Create a new texture
+		glDeleteTextures(1, &_texture);
+		glGenTextures(1, &_texture);
+		glBindTexture(GL_TEXTURE_2D, _texture);
+		/*
+		GLint const Swizzle[] = { GL_BLUE, GL_GREEN, GL_RED, GL_ALPHA };
+		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, Swizzle);
+		*/
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			_context->width(), _context->height(),
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			(void*)_context->buffer()
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		cout << "Window size " << _context->width() << " x " << _context->height() << endl;
+		traceGlErrors();
 
-		GrGLFramebufferInfo framebufferInfo;
-		framebufferInfo.fFBOID = 0; // assume default framebuffer
-		framebufferInfo.fFormat = GL_RGBA8;
-
-		GrBackendRenderTarget backendRenderTarget(
-			width, height,
-			0, // sample count
-			0, // stencil bits
-			framebufferInfo );
-
-		_surface = SkSurface::MakeFromBackendRenderTarget(
-			_context,
-			backendRenderTarget,
-			kBottomLeft_GrSurfaceOrigin,
-			kRGBA_8888_SkColorType,
-			nullptr, nullptr ).release();
-		if ( _surface == nullptr ) abort();
+		// Set projection
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.0f, width, height, 0.0f, 0.0f, 1.0f);
+		glViewport(0, 0, width, height);
 
 		// Scale stage
 		double fx = width / stage()->width;
@@ -405,12 +458,6 @@ namespace derive {
 		else if ( _alignMode & AlignMode::Bottom ) {
 			stage()->y = height - sh;
 		}
-		_stageRect->setLTRB(
-			max( 0, (int)stage()->x ),
-			max( 0, (int)stage()->y ),
-			min( width, (int)( stage()->x + stage()->width + 0.5 ) ),
-			min( height, (int)( stage()->y + stage()->height + 0.5 ) )
-		);
 		HitAreaRect* stageHit = (HitAreaRect*)_stage->hitArea();
 		stageHit->x = _stage->x;
 		stageHit->y = _stage->y;
@@ -480,6 +527,6 @@ namespace derive {
 		_mouseEvents->push_back( event );
 	}
 
-	void Player::onFileDrop( int count, const char** paths ) { }
+	void Player::onFileDrop( int count, const char** paths ) {}
 
 }

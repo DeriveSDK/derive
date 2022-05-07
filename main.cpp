@@ -34,13 +34,12 @@
 #include "derive/geom/HitAreaCircle.h"
 #endif
 
-#include <iostream>
-
 using namespace derive;
 
 #ifdef DERIVE_SCRIPT
 /**
  * @brief Derive script entry point
+ * DERIVE_SCRIPT currently not supported (work in progress) 
  */
 int main( void ) {
 	Script* script;
@@ -59,26 +58,26 @@ int main( void ) {
  */
 class Main : public Player {
 public:
-	Rive* juice;
-	Rive* babyJuice;
-	Image* logo;
+	Rive* juice = nullptr;
+	Rive* babyJuice = nullptr;
+	Image* logo = nullptr;
 
 	Main() : Player( 1200, 800, "Hello world", false ) {
 		scaleMode( ScaleMode::Pixel );
 		displayMode( DisplayMode::Contain );
 		letterboxColor( 0xff000000 );
 		backgroundColor( 0xff662222 );
-
+		
 		juice = new Rive( "juice.riv" );
-		//juice->fit( stage()->bounds(), FitMode::Contain );
 		juice->scaleX = 0.6;
 		juice->scaleY = 0.6;
 		juice->originX = juice->width / 2;
 		juice->originY = juice->height / 2;
 		juice->x = stage()->width / 2;
 		juice->y = stage()->height / 2;
-		juice->hitArea( new HitAreaCircle(540,540,540) );
 		stage()->addChild( juice );
+		
+		juice->hitArea(new HitAreaCircle(540, 540, 540));
 
 		babyJuice = new Rive( "juice.riv" );
 		babyJuice->originX = babyJuice->width / 2;
@@ -89,34 +88,35 @@ public:
 		babyJuice->scaleY = 0.3;
 		juice->addChild( babyJuice );
 
-		logo = new Image( "reset-icon.png" );
+		logo = new Image( "derive-icon.png" );
 		logo->originX = logo->width() / 2;
 		logo->originY = logo->height() / 2;
-		logo->x = 1080;
-		logo->y = 1080;
-		logo->scaleX = 0.75;
-		logo->scaleY = 0.75;
+		logo->x = 900;
+		logo->y = 900;
 		juice->addChild( logo );
 
 		juice->listen( MouseEvent::Down, [this](Event* event) -> bool { return this->onMouseClick( event ); } );
+		
 		stage()->listen( PlayerEvent::Update, [this](Event* event) -> bool { return this->onUpdate( (PlayerEvent*)event ); } );
 	}
 
 	~Main() {	
 		delete babyJuice;
 		delete juice;
+		delete logo;
 	}
 
 	bool onUpdate( PlayerEvent* event ) {
 		juice->rotation += event->dt * 20;
+		logo->rotation -= event->dt * 20;
 		babyJuice->rotation += event->dt * 40;
 		return true;
 	}
-
+	
 	bool onMouseClick( Event* event ) {
-		cout << "mouse clicked" << endl;
-		babyJuice->x = juice->mouse->x;
-		babyJuice->y = juice->mouse->y;
+		logo->x = juice->mouse->x;
+		logo->y = juice->mouse->y;
+
 		return true;
 	}
 };
