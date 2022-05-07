@@ -11,10 +11,10 @@ import re
 # within a Derive project.
 
 # Where to look for assets
-assetroot = "."
+assetroot = os.path.dirname(os.path.abspath(__file__))
 
 # Where to generate compiled assets
-assetout = "."+os.sep+"include"
+assetout = os.path.dirname(os.path.abspath(__file__))+os.sep+"include"
 
 # Files to ignore
 ignore = ["build-assets.py", "build-assets.bat"]
