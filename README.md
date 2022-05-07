@@ -69,6 +69,29 @@ main = new Main();
 main.run();
 ````
 
+## Build instructions
+
+Currently derive is supported on windows only. It uses a combination of MSVC and Clang-cl, and the meson build system (for dependencies).
+
+Make sure you have the following installed:
+* [Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio)
+* [LLVM Visual Studio extension](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild)
+* [Python](https://www.python.org/downloads/)
+* [Meson](https://mesonbuild.com/Getting-meson.html) and [Ninja](https://ninja-build.org/)
+
+Tip: We recommend installing python, meson and ninja by using the [chocolatey](https://chocolatey.org/install) package manager.
+
+To get Derive running:
+* Clone this repository (for example, to `C:\projects\derive`)
+* Open the native command prompt for Visual Studio ([hit windows search and start typing "native command prompt"](https://stackoverflow.com/questions/61209155/how-do-i-get-the-x64-native-tools-developer-command-prompt-for-visual-studio-com))
+* Change directory to the `dependencies` folder.
+  * For example, `cd C:\projects\derive\dependencies`
+* Build the dependencies by running the following two scripts:
+  * `build-all-debug.bat`
+  * `build-all-release.bat`
+* Now, open the solution in Visual Studio and hit build!
+  * Example, open `C:\projects\derive\solution\Derive.sln`
+
 ## Dependencies
 
 Derive would not be possible without the fantastic work of others. Derive requires:
