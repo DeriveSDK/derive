@@ -115,6 +115,12 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)\..\assets\build-assets.bat"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Build assets</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -124,6 +130,12 @@
     <Link>
       <AdditionalDependencies>rive.lib;thorvg.lib;glfw3.lib;opengl32.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)\..\assets\build-assets.bat"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Build assets to c header files</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\derive\display\src\Color.cpp" />
