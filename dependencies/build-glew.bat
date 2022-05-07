@@ -67,8 +67,8 @@ rmdir "build" /s /q
 :: Configure build
 echo Configuring build
 :: Pretty sure this is ignored anyway. For some reason this meson build file only support windows and msvc
-set "CC=clang-cl"
-set "CXX=clang-cl"
+set "CC=cl"
+set "CXX=cl"
 meson build
 cd build
 meson configure -Ddefault_library=static -Dwarning_level=0 -Db_ndebug=if-release 
