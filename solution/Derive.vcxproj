@@ -70,11 +70,11 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\quickjspp\quickjs;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Projects\derive\dependencies\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\quickjspp\quickjs;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Projects\derive\dependencies\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -114,6 +114,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <PreBuildEvent>
       <Command>"$(SolutionDir)\..\assets\build-assets.bat"</Command>
@@ -126,6 +127,8 @@
     <ClCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <AdditionalDependencies>rive.lib;thorvg.lib;glfw3.lib;opengl32.lib;glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -151,6 +154,7 @@
     <ClCompile Include="..\derive\geom\src\Point.cpp" />
     <ClCompile Include="..\derive\render\src\Context.cpp" />
     <ClCompile Include="..\derive\src\Player.cpp" />
+    <ClCompile Include="..\derive\src\Script.cpp" />
     <ClCompile Include="..\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +185,7 @@
     <ClInclude Include="..\derive\mem\MemoryPool.h" />
     <ClInclude Include="..\derive\Player.h" />
     <ClInclude Include="..\derive\render\Context.h" />
+    <ClInclude Include="..\derive\Script.h" />
     <ClInclude Include="..\derive\utils\Math.h" />
     <ClInclude Include="..\derive\utils\RiveTypes.h" />
     <ClInclude Include="..\derive\utils\TvgTypes.h" />

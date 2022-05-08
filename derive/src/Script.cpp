@@ -70,44 +70,44 @@ namespace derive {
 		auto& module = context->addModule( "geom" );
 
 		// Point
-		typedef void ( Point::* Point_voidPointF )( Point* );
-		typedef void ( Point::* Point_void2DoubleF )( double, double );
-		typedef bool ( Point::* Point_boolPointF )( Point* );
-		typedef bool ( Point::* Point_bool2DoubleF )( double, double );
-		typedef void ( Point::* Point_voidDoubleF )( double );
-		typedef void ( Point::* Point_voidDoublePointF )( double, Point* );
-		typedef void ( Point::* Point_void3DoubleF )( double, double, double );
-		module.class_<Point>( "Point" )
+		typedef void (derive::geom::Point::* Point_voidPointF )(derive::geom::Point* );
+		typedef void (derive::geom::Point::* Point_void2DoubleF )( double, double );
+		typedef bool (derive::geom::Point::* Point_boolPointF )(derive::geom::Point* );
+		typedef bool (derive::geom::Point::* Point_bool2DoubleF )( double, double );
+		typedef void (derive::geom::Point::* Point_voidDoubleF )( double );
+		typedef void (derive::geom::Point::* Point_voidDoublePointF )( double, derive::geom::Point* );
+		typedef void (derive::geom::Point::* Point_void3DoubleF )( double, double, double );
+		module.class_<derive::geom::Point>( "Point" )
 			.constructor<double, double>()
-			.fun<&Point::x>( "x" )
-			.fun<&Point::y>( "y" )
-			.fun<&Point::clear>( "clear" )
-			.fun<(Point_voidPointF)&Point::set>( "set" )
-			.fun<(Point_void2DoubleF)&Point::set>( "setXY" )
-			.fun<(Point_boolPointF)&Point::equals>( "equals" )
-			.fun<(Point_bool2DoubleF)&Point::equals>( "equalsXY" )
-			.fun<(Point_voidPointF)&Point::translate>( "translate" )
-			.fun<(Point_void2DoubleF)&Point::translate>( "translateXY" )
-			.fun<(Point_voidPointF)&Point::add>( "add" )
-			.fun<(Point_void2DoubleF)&Point::add>( "addXY" )
-			.fun<(Point_voidPointF)&Point::subtract>( "subtract" )
-			.fun<(Point_void2DoubleF)&Point::subtract>( "subtractXY" )
-			.fun<(Point_voidDoubleF)&Point::rotate>( "rotate" )
-			.fun<(Point_voidDoublePointF)&Point::rotate>( "rotateAbout" )
-			.fun<(Point_void3DoubleF)&Point::rotate>( "rotateAboutXY" )
-			.fun<&Point::copy>( "copy" )
-			.fun<&Point::clone>( "clone" );
+			.fun<&derive::geom::Point::x>( "x" )
+			.fun<&derive::geom::Point::y>( "y" )
+			.fun<&derive::geom::Point::clear>( "clear" )
+			.fun<(Point_voidPointF)&derive::geom::Point::set>( "set" )
+			.fun<(Point_void2DoubleF)&derive::geom::Point::set>( "setXY" )
+			.fun<(Point_boolPointF)&derive::geom::Point::equals>( "equals" )
+			.fun<(Point_bool2DoubleF)&derive::geom::Point::equals>( "equalsXY" )
+			.fun<(Point_voidPointF)&derive::geom::Point::translate>( "translate" )
+			.fun<(Point_void2DoubleF)&derive::geom::Point::translate>( "translateXY" )
+			.fun<(Point_voidPointF)&derive::geom::Point::add>( "add" )
+			.fun<(Point_void2DoubleF)&derive::geom::Point::add>( "addXY" )
+			.fun<(Point_voidPointF)&derive::geom::Point::subtract>( "subtract" )
+			.fun<(Point_void2DoubleF)&derive::geom::Point::subtract>( "subtractXY" )
+			.fun<(Point_voidDoubleF)&derive::geom::Point::rotate>( "rotate" )
+			.fun<(Point_voidDoublePointF)&derive::geom::Point::rotate>( "rotateAbout" )
+			.fun<(Point_void3DoubleF)&derive::geom::Point::rotate>( "rotateAboutXY" )
+			.fun<&derive::geom::Point::copy>( "copy" )
+			.fun<&derive::geom::Point::clone>( "clone" );
 
 		// Bounds
 		typedef double( Bounds::* Bounds_getDoubleF )( ) const;
 		typedef void( Bounds::* Bounds_setDoubleF )( double );
 		typedef void( Bounds::* Bounds_void2Double )( double, double );
-		typedef void( Bounds::* Bounds_voidPoint2Double )( Point* p, double, double );
+		typedef void( Bounds::* Bounds_voidPoint2Double )(derive::geom::Point* p, double, double );
 		typedef void( Bounds::* Bounds_void4Double )( double, double, double, double );
 		typedef bool( Bounds::* Bounds_boolBounds )( Bounds* );
 		typedef bool( Bounds::* Bounds_bool2Double )( double, double );
-		typedef void( Bounds::* Bounds_voidPoint )( Point* );
-		typedef bool( Bounds::* Bounds_boolPoint )( Point* );
+		typedef void( Bounds::* Bounds_voidPoint )(derive::geom::Point* );
+		typedef bool( Bounds::* Bounds_boolPoint )(derive::geom::Point* );
 		module.class_<Bounds>( "Bounds" )
 			.constructor<double, double, double, double>()
 			.property<(Bounds_getDoubleF)&Bounds::x, (Bounds_setDoubleF)&Bounds::x>( "x" )
@@ -139,26 +139,26 @@ namespace derive {
 			.fun<&Bounds::clone>( "clone" );
 
 		// Matrix
-		typedef void( Matrix::* Matrix_voidDouble )( double );
-		typedef void( Matrix::* Matrix_void3Double )( double, double, double );
-		typedef void( Matrix::* Matrix_voidPoint )( Point* );
-		typedef void( Matrix::* Matrix_voidPoint2Double )( Point*, double, double );
-		module.class_<Matrix>( "Matrix" )
+		typedef void(derive::geom::Matrix::* Matrix_voidDouble )( double );
+		typedef void(derive::geom::Matrix::* Matrix_void3Double )( double, double, double );
+		typedef void(derive::geom::Matrix::* Matrix_voidPoint )(derive::geom::Point* );
+		typedef void(derive::geom::Matrix::* Matrix_voidPoint2Double )(derive::geom::Point*, double, double );
+		module.class_<derive::geom::Matrix>( "Matrix" )
 			.constructor<>()
-			.fun<&Matrix::apply>( "apply" )
-			.fun<&Matrix::identity>( "identity" )
-			.fun<&Matrix::concat>( "concat" )
-			.fun<&Matrix::invert>( "invert" )
-			.fun<(Matrix_voidPoint)&Matrix::transform>( "transform" )
-			.fun<(Matrix_voidPoint2Double)&Matrix::transform>( "transformAbout" )
-			.fun<(Matrix_voidPoint)&Matrix::inverseTransform>( "inverseTransform" )
-			.fun<(Matrix_voidPoint2Double)&Matrix::inverseTransform>( "inverseTransformAbout" )
-			.fun<(Matrix_voidDouble)&Matrix::rotate>( "rotate" )
-			.fun<(Matrix_void3Double)&Matrix::rotate>( "rotateAbout" )
-			.fun<&Matrix::scale>( "scale" )
-			.fun<&Matrix::translate>( "translate" )
-			.fun<&Matrix::copy>( "copy" )
-			.fun<&Matrix::clone>( "clone" );
+			.fun<&derive::geom::Matrix::apply>( "apply" )
+			.fun<&derive::geom::Matrix::identity>( "identity" )
+			.fun<&derive::geom::Matrix::concat>( "concat" )
+			.fun<&derive::geom::Matrix::invert>( "invert" )
+			.fun<(Matrix_voidPoint)&derive::geom::Matrix::transform>( "transform" )
+			.fun<(Matrix_voidPoint2Double)&derive::geom::Matrix::transform>( "transformAbout" )
+			.fun<(Matrix_voidPoint)&derive::geom::Matrix::inverseTransform>( "inverseTransform" )
+			.fun<(Matrix_voidPoint2Double)&derive::geom::Matrix::inverseTransform>( "inverseTransformAbout" )
+			.fun<(Matrix_voidDouble)&derive::geom::Matrix::rotate>( "rotate" )
+			.fun<(Matrix_void3Double)&derive::geom::Matrix::rotate>( "rotateAbout" )
+			.fun<&derive::geom::Matrix::scale>( "scale" )
+			.fun<&derive::geom::Matrix::translate>( "translate" )
+			.fun<&derive::geom::Matrix::copy>( "copy" )
+			.fun<&derive::geom::Matrix::clone>( "clone" );
 
 		// Hit area
 		module.class_<HitArea>( "HitArea" )

@@ -4,6 +4,9 @@
 #define CONFIG_BIGNUM
 #define CONFIG_DEBUGGER
 #include "quickjspp.hpp"
+extern "C" {
+#include "quickjs-libc.h"
+}
 #include "derive/Player.h"
 #include <string>
 

@@ -57,6 +57,9 @@
     <ClCompile Include="..\derive\render\src\Context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\derive\src\Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\derive\Player.h">
@@ -147,6 +150,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\derive\utils\TvgTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\derive\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
