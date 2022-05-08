@@ -74,7 +74,7 @@
     <LibraryPath>C:\Projects\derive\dependencies\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\quickjspp\quickjs;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\..\;$(SolutionDir)\..\assets\include;$(SolutionDir)\..\dependencies\quickjspp;$(SolutionDir)\..\dependencies\thorvg\inc;$(SolutionDir)\..\dependencies\glfw\include;$(SolutionDir)\..\dependencies\glew\include;$(SolutionDir)\..\dependencies\OpenGL-Registry\api;$(SolutionDir)\..\dependencies\EGL-Registry\api;$(SolutionDir)\..\dependencies\rive-tizen\src\renderer;$(SolutionDir)\..\dependencies\rive-tizen\submodule\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Projects\derive\dependencies\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

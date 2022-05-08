@@ -5,7 +5,7 @@
 #define CONFIG_DEBUGGER
 #include "quickjspp.hpp"
 extern "C" {
-#include "quickjs-libc.h"
+#include "quickjs/quickjs-libc.h"
 }
 #include "derive/Player.h"
 #include <string>

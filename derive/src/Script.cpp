@@ -298,7 +298,7 @@ namespace derive {
 		// Display object
 		typedef HitArea*( DisplayObject::* DisplayObject_getHitAreaF )( void );
 		typedef void( DisplayObject::* DisplayObject_setHitAreaF )( HitArea* );
-		module.class_<DisplayObject>( "DisplayObject" )
+		module.class_<DisplayObject>("DisplayObject")
 			.base<Dispatcher>()
 			.constructor<>()
 			.property<&DisplayObject::parent>( "parent" )

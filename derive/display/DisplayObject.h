@@ -282,7 +282,7 @@ namespace derive {
 			 * affect the mouse position on for the children.
 			 * @return Point* The mouse position in local space
 			 */
-			Point* mouse;
+			derive::geom::Point* mouse;
 
 			/**
 			 * @brief Get the snap grid for this object
